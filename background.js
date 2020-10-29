@@ -12,67 +12,78 @@ chrome.runtime.onMessage.addListener(
         return true;
     });
 
-
-
-function requestHostPermission(url){
+function requestHostPermission(tab){
     chrome.permissions.request({
         permissions: ['activeTab'],
-        origins: [url + "*"]
+        origins: [tab.url + "*"]
         }, function(granted) {
-        // The callback argument will be true if the user granted the permissions.
-        if (!granted) {
-        if(chrome.runtime.lastError) console.error(chrome.runtime.lastError);
-        throw Error("Permission denied for host ");
-        }
+            var code = 'window.location.reload();';
+            chrome.tabs.executeScript(tab.id, {code: code});          
+            // The callback argument will be true if the user granted the permissions.
+            if (!granted) {
+                if(chrome.runtime.lastError) console.error(chrome.runtime.lastError);
+                throw Error("Permission denied for host ");
+            }
     });
 }
 
 urls = ['https://tigercenter.rit.edu/tigerCenterApp/api/class-search', 'https://www.reddit.com/'];
+let conditions = [];
+urls.forEach(url => 
+    conditions.push(
+        new chrome.declarativeContent.PageStateMatcher({
+        pageUrl: { hostEquals: new URL(url).hostname }
+      })
+))
+
+const rule = {
+    conditions: conditions,
+    actions: [ new chrome.declarativeContent.ShowPageAction(), new chrome.declarativeContent.SetIcon({path:'images/icon16.png'}) ]
+  };
+  
+chrome.runtime.onInstalled.addListener(function(details) {
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+        chrome.declarativeContent.onPageChanged.addRules([rule]);
+    });
+});
+  
+
+function insertContentScript(){
+    chrome.tabs.insertCSS({
+        file: "tooltipster/dist/css/tooltipster.main.min.css"
+    });
+    chrome.tabs.insertCSS({
+        file: "tooltip.css"
+    });
+    chrome.tabs.executeScript({
+        file: "jquery-3.3.1.min.js"
+    });
+    chrome.tabs.executeScript({
+        file: "node_modules/papaparse/papaparse.min.js"
+    });
+    chrome.tabs.executeScript({
+        file: "names.js"
+    });
+    chrome.tabs.executeScript({
+        file: "addedNicknames.js"
+    });
+    chrome.tabs.executeScript({
+        file: "arrive.min.js"
+    });
+    chrome.tabs.executeScript({
+        file: "tooltipster/dist/js/tooltipster.bundle.min.js"
+    });
+    chrome.tabs.executeScript({
+        file: "contentscript.js"
+    });
+}
 
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
     if (info.status === 'complete') {
-        urls.forEach(url => {
-            if(new URL(url).hostname === new URL(tab.url).hostname && 
-            new URL(url).pathname === new URL(tab.url).pathname) {
-                chrome.tabs.insertCSS({
-                    file: "tooltipster/dist/css/tooltipster.main.min.css"
-                });
-                chrome.tabs.insertCSS({
-                    file: "tooltip.css"
-                });
-                chrome.tabs.executeScript({
-                    file: "jquery-3.3.1.min.js"
-                });
-                chrome.tabs.executeScript({
-                    file: "node_modules/papaparse/papaparse.min.js"
-                });
-                chrome.tabs.executeScript({
-                    file: "names.js"
-                });
-                chrome.tabs.executeScript({
-                    file: "addedNicknames.js"
-                });
-                chrome.tabs.executeScript({
-                    file: "arrive.min.js"
-                });
-                chrome.tabs.executeScript({
-                    file: "tooltipster/dist/js/tooltipster.bundle.min.js"
-                });
-                chrome.tabs.executeScript({
-                    file: "contentscript.js"
-                });
-            }
-        });
+        insertContentScript();
     }
 });
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-    urls.forEach(url => {
-        if(new URL(url).hostname === new URL(tab.url).hostname && 
-        new URL(url).pathname === new URL(tab.url).pathname) {
-            chrome.tabs.executeScript({
-                code: requestHostPermission(tab.url),
-            });
-        }
-    });
+chrome.pageAction.onClicked.addListener(function(tab) {
+    requestHostPermission(tab)
 });

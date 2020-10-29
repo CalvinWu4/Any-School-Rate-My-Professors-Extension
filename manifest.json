@@ -2,7 +2,7 @@
 	"name" : "Rate My Professors for RIT Tiger Center",
 	"version" : "1.0.0",
 	"description" : "Shows the Rate My Professors rating of professors while searching classes on Tiger Center.",
-	"permissions": ["https://search-production.ratemyprofessors.com/*", "activeTab"],
+	"permissions": ["https://search-production.ratemyprofessors.com/*", "activeTab", "declarativeContent"],
 	"optional_permissions": [
         "http://*/*",
         "https://*/*"
@@ -18,8 +18,8 @@
 		"tooltipster/dist/js/tooltipster.bundle.min.js",
 		"contentscript.js"
 		] ,
-	"browser_action": {
-		"default_icon": "images/icon16.png"
+	"page_action": {
+		"default_icon": "images/icon16-gray.png"
 	},
 	"background": {
 		"scripts": ["background.js"],
