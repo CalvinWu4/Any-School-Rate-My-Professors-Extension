@@ -1,22 +1,51 @@
-const nicknames = getNicknames();
+let savedRecords = JSON.parse(localStorage.getItem("records"));
+
+let waitForFetch;
+
+// Add ratings if there are already records saved
+if (savedRecords) {
+    AddRatings();
+}
+// Wait for records to be fetched before adding ratings
+else{
+    waitForFetch = true;
+}
+
+// Refresh records from background fetch
+chrome.runtime.onMessage.addListener(function(message) {
+    const receivedRecords = message.records;
+    savedRecords = receivedRecords.filter(x => new URL(x.fields.URL).hostname === window.location.hostname && 
+    new URL(x.fields.URL).pathname === window.location.pathname);
+    localStorage.setItem("records", JSON.stringify(savedRecords));
+    savedRecords = JSON.parse(localStorage.getItem("records"));
+    if (waitForFetch) {
+        waitForFetch = false;
+        AddRatings();
+    }
+});
+
+const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
 
 // Add professor ratings
-const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
-document.arrive('.col-xs-2 [href*="mailto:"]', function(){
-    const fullName = replaceCustomNicknames(this.textContent);
-    const splitName = fullName.split(' ');
-    const firstName = splitName[0].toLowerCase().trim();
-    const lastName = splitName.slice(-1)[0].toLowerCase().trim();
-    let middleName;
-    if (splitName.length > 2) {
-        middleName = splitName[0];
-        middleName = middleName.toLowerCase().trim();
-    }
-    url = urlBase + firstName + "+" + lastName + "+AND+schoolid_s%3A807";
-    const runAgain = true;
-    // Query Rate My Professor with the professor's name
-    GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0);
-});
+function AddRatings() {
+    document.arrive(savedRecords[0].fields.Selector, function(){
+        const fullName = replaceCustomNicknames(this.textContent);
+        const splitName = fullName.split(' ');
+        const firstName = splitName[0].toLowerCase().trim();
+        const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+        let middleName;
+        if (splitName.length > 2) {
+            middleName = splitName[0];
+            middleName = middleName.toLowerCase().trim();
+        }
+        url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+        const runAgain = true;
+        // Query Rate My Professor with the professor's name
+        GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0);
+    });
+}
+
+const nicknames = getNicknames();
 
 function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index) {
     chrome.runtime.sendMessage({ url: url }, function (response) {

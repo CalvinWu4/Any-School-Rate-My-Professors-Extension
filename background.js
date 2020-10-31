@@ -28,7 +28,7 @@ function requestHostPermission(tab){
     });
 }
 
-
+let savedRecords = JSON.parse(localStorage.getItem("records"));
 let savedUrls = JSON.parse(localStorage.getItem("urls"));
 
 // Sync saved data with airtable data
@@ -36,19 +36,21 @@ fetch('https://airtable.calvinwu4.workers.dev/')
     .then(response => response.json())
     .then(data => { 
         let urls = [];
-        const records = data.records;
+        records = data.records;
         records.forEach(function(record){
             const fields = record.fields;
+            const college = fields.College;
+            const id = fields.ID;
             const url = fields.URL;
             const selector = fields.Selector;
-            if (url && selector) {
+            if(college && id && url && selector) {
                 urls.push(url);
-                // selectors.push(selector);
             }
         })
-        if (JSON.stringify(savedUrls) != JSON.stringify(urls)) {
+        if (JSON.stringify(savedRecords) != JSON.stringify(records)) {
             localStorage.clear();
             localStorage.setItem("urls", JSON.stringify(urls));
+            localStorage.setItem("records", JSON.stringify(records));
             chrome.runtime.reload();
         }
     });
@@ -73,7 +75,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     });
 });
   
-function injectCode() {
+function injectCode(tabId) {
     chrome.tabs.insertCSS({
         file: "tooltipster/dist/css/tooltipster.main.min.css"
     });
@@ -100,6 +102,8 @@ function injectCode() {
     });
     chrome.tabs.executeScript({
         file: "contentscript.js"
+    }, function() {
+        chrome.tabs.sendMessage(tabId, {records: savedRecords}); // Send records to content script
     });
 }
 
@@ -110,7 +114,7 @@ chrome.pageAction.onClicked.addListener(function(tab) {
 
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
-    if (info.status === 'complete') {
-        injectCode();
-    }
+    // if (info.status === 'complete') {
+        injectCode(tabId);
+    // }
 });
