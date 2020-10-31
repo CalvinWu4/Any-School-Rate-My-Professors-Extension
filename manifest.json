@@ -17,7 +17,7 @@
 		"arrive.min.js",
 		"tooltipster/dist/js/tooltipster.bundle.min.js",
 		"contentscript.js"
-		] ,
+	],
 	"page_action": {
 		"default_icon": "images/icon16-gray.png"
 	},
