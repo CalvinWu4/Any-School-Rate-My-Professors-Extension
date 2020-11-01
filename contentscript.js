@@ -13,9 +13,10 @@ else{
 
 // Refresh records from background fetch
 chrome.runtime.onMessage.addListener(function(message) {
-    const receivedRecords = message.records;
-    savedRecords = receivedRecords.filter(x => new URL(x.fields.URL).hostname === window.location.hostname && 
-    new URL(x.fields.URL).pathname === window.location.pathname);
+    const records = message.records;
+    savedRecords = records.filter(record => 
+        new URL(record.fields.URL).hostname === window.location.hostname && 
+        new URL(record.fields.URL).pathname === window.location.pathname);
     localStorage.setItem("records", JSON.stringify(savedRecords));
     savedRecords = JSON.parse(localStorage.getItem("records"));
     if (waitForFetch) {

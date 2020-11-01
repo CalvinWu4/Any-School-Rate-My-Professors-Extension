@@ -29,35 +29,34 @@ function requestHostPermission(tab){
 }
 
 let savedRecords = JSON.parse(localStorage.getItem("records"));
-let savedUrls = JSON.parse(localStorage.getItem("urls"));
+let urls;
+if (savedRecords) {
+    urls = savedRecords.map(record => record.fields.URL);
+}
 
 // Sync saved data with airtable data
-fetch('https://airtable.calvinwu4.workers.dev/')
-    .then(response => response.json())
-    .then(data => { 
-        let urls = [];
-        records = data.records;
-        records.forEach(function(record){
-            const fields = record.fields;
-            const college = fields.College;
-            const id = fields.ID;
-            const url = fields.URL;
-            const selector = fields.Selector;
-            if(college && id && url && selector) {
-                urls.push(url);
+function getData() {
+    fetch('https://airtable.calvinwu4.workers.dev/')
+        .then(response => response.json())
+        .then(data => { 
+            records = data.records.filter(record => 
+                record.fields.College &&
+                record.fields.ID &&
+                new URL(record.fields.URL)  && 
+                record.fields.Selector);
+            if (JSON.stringify(savedRecords) != JSON.stringify(records)) {
+                savedRecords = records;
+                localStorage.setItem("records", JSON.stringify(records));
+                chrome.runtime.reload();
             }
-        })
-        if (JSON.stringify(savedRecords) != JSON.stringify(records)) {
-            localStorage.clear();
-            localStorage.setItem("urls", JSON.stringify(urls));
-            localStorage.setItem("records", JSON.stringify(records));
-            chrome.runtime.reload();
-        }
-    });
+        });
+}
 
-// Rules for when to show page action and set icon color to active
+getData();
+
+// Rules for when to show page action and icon
 let conditions = [];
-savedUrls.forEach(url => 
+urls.forEach(url => 
     conditions.push(
         new chrome.declarativeContent.PageStateMatcher({
         pageUrl: { hostEquals: new URL(url).hostname, pathEquals: new URL(url).pathname }
@@ -114,7 +113,6 @@ chrome.pageAction.onClicked.addListener(function(tab) {
 
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
-    // if (info.status === 'complete') {
-        injectCode(tabId);
-    // }
+    injectCode(tabId);
+    getData();
 });
