@@ -128,7 +128,7 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                 title.textContent = "Rate My Professor Details";
                 div.appendChild(title);
                 const professorText = document.createElement("p");
-                professorText.textContent = `${realFirstName} ${realLastName}, Professor in the ${dept} department`;
+                professorText.textContent = `${realFirstName} ${realLastName}, Professor in ${dept}`;
                 div.appendChild(professorText);
                 const avgRatingText = document.createElement("p");
                 avgRatingText.textContent = `Overall Quality: ${profRating ? profRating : 'N/A'}/5`
