@@ -24,10 +24,27 @@ chrome.runtime.onMessage.addListener(function(message) {
     }
 });
 
-const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
-
 // Add professor ratings
 function AddRatings() {
+    const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
+    // For professor names that are loaded when the page is loaded
+    [...document.querySelectorAll(savedRecords[0].fields.Selector)]
+    .forEach(element => {
+        const fullName = replaceCustomNicknames(element.textContent);
+        const splitName = fullName.split(' ');
+        const firstName = splitName[0].toLowerCase().trim();
+        const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+        let middleName;
+        if (splitName.length > 2) {
+            middleName = splitName[0];
+            middleName = middleName.toLowerCase().trim();
+        }
+        const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+        const runAgain = true;
+        // Query Rate My Professor with the professor's name
+        GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
+    });
+    // For professor names that take time to load
     document.arrive(savedRecords[0].fields.Selector, function(){
         const fullName = replaceCustomNicknames(this.textContent);
         const splitName = fullName.split(' ');
@@ -47,7 +64,7 @@ function AddRatings() {
 
 const nicknames = getNicknames();
 
-function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index) {
+function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index, urlBase) {
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const resp = response.JSONresponse;
         const numFound = resp.response.numFound;
@@ -81,12 +98,12 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             if (middleName && runAgain) {
                 firstName = middleName;
                 url = urlBase + firstName + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, newElem, lastName, firstName, middleName, false, null);
+                GetProfessorRating(url, newElem, lastName, firstName, middleName, false, null, urlBase);
             }
             // Try again with nicknames for the professor's first name
             else if (runAgain && nicknames[originalFirstName]) {
                 url = urlBase + nicknames[originalFirstName][index] + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, newElem, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1);
+                GetProfessorRating(url, newElem, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1, urlBase);
             }
             // Set link to search results if not found
             else {
