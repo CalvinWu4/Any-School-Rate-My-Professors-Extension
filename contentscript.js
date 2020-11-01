@@ -121,7 +121,7 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                 let wouldTakeAgainText;
                 let easyRatingText;
                 let topTagsLabel;
-                let topTagsText;
+                let topTagsFirstLineText;
 
                 const div = document.createElement("div");
                 const title = document.createElement("h3");
@@ -180,12 +180,21 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                     topTagsLabel = document.createElement("p");
                     topTagsLabel.textContent = "Top Tags:";
                     div.appendChild(topTagsLabel);
-                    topTagsText = document.createElement("p");
+                    topTagsFirstLineText = document.createElement("p");
+                    topTagsSecondLineText = document.createElement("p");
                     for (let i = 0; i < topTags.length; i++) {
                         let tag = topTags[i][0];
-                        topTagsText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                        if (i < 3) {
+                            topTagsFirstLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                        }
+                        else{
+                            topTagsSecondLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                        }
                     }
-                    div.appendChild(topTagsText);
+                    div.appendChild(topTagsFirstLineText);
+                    if (topTagsSecondLineText.childNodes) {
+                        div.appendChild(topTagsSecondLineText);
+                    }
                     div.appendChild(document.createElement("br"));
                 }
                 if (mostHelpfulReview) {
