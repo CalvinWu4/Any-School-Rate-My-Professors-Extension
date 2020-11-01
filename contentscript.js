@@ -53,6 +53,13 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
         const resp = response.JSONresponse;
         const numFound = resp.response.numFound;
         const doc = resp.response.docs[0];
+
+        // Append new anchor element
+        const newElem = document.createElement('a');
+        newElem.textContent = element.textContent;
+        element.textContent = '';
+        element.appendChild(newElem);
+        
         // Add professor data if found
         if (numFound > 0 && doc) {
             const profID = doc.pk_id;
@@ -64,30 +71,30 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             const easyRating = doc.averageeasyscore_rf && doc.averageeasyscore_rf.toFixed(1);
 
             const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
-            element.textContent += ` (${profRating ? profRating : 'N/A'})`;
-            element.setAttribute('href', profURL);
-            element.setAttribute('target', '_blank');
+            newElem.textContent += ` (${profRating ? profRating : 'N/A'})`;
+            newElem.setAttribute('href', profURL);
+            newElem.setAttribute('target', '_blank');
 
             let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
-            AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept);
+            AddTooltip(newElem, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept);
         } else {
             // Try again with professor's middle name if it didn't work the first time
             if (middleName && runAgain) {
                 firstName = middleName;
                 url = urlBase + firstName + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, element, lastName, firstName, middleName, false, null);
+                GetProfessorRating(url, newElem, lastName, firstName, middleName, false, null);
             }
             // Try again with nicknames for the professor's first name
             else if (runAgain && nicknames[originalFirstName]) {
                 url = urlBase + nicknames[originalFirstName][index] + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, element, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1);
+                GetProfessorRating(url, newElem, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1);
             }
             // Set link to search results if not found
             else {
-                element.textContent += " (NF)";
-                element.setAttribute('href', 
+                newElem.textContent += " (NF)";
+                newElem.setAttribute('href', 
                 `https://www.ratemyprofessors.com/search.jsp?query=${originalFirstName}+${middleName ? middleName + '+': ''}${lastName}`);
-                element.setAttribute('target', '_blank');
+                newElem.setAttribute('target', '_blank');
             }
         }        
     });
