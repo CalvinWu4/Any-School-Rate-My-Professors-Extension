@@ -15,8 +15,7 @@ else{
 chrome.runtime.onMessage.addListener(function(message) {
     const records = message.records;
     savedRecords = records.filter(record => 
-        new URL(record.fields.URL).hostname === window.location.hostname && 
-        new URL(record.fields.URL).pathname === window.location.pathname);
+        new URL(record.fields.URL).hostname === window.location.hostname);
     localStorage.setItem("records", JSON.stringify(savedRecords));
     savedRecords = JSON.parse(localStorage.getItem("records"));
     if (waitForFetch) {
