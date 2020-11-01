@@ -58,7 +58,7 @@ function AddRatings() {
         url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
         const runAgain = true;
         // Query Rate My Professor with the professor's name
-        GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0);
+        GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
     });
 }
 
