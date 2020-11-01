@@ -169,31 +169,31 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                     easyRatingText = document.createElement("p");
                     easyRatingText.textContent = `Level of Difficulty: ${easyRating}`;
                     div.appendChild(easyRatingText);
-                    wouldTakeAgainText = document.createElement("p");
                     if (ratings.length >= 8 && wouldTakeAgainNACount < (ratings.length / 2)) {
                         wouldTakeAgain = ((wouldTakeAgain / (ratings.length - wouldTakeAgainNACount)) * 100).toFixed(0).toString() + "%";
-                    } else {
-                        wouldTakeAgain = "N/A";
+                        wouldTakeAgainText = document.createElement("p");
+                        wouldTakeAgainText.textContent = "Would take again: " + wouldTakeAgain;
+                        div.appendChild(wouldTakeAgainText);
                     }
-                    wouldTakeAgainText.textContent = "Would take again: " + wouldTakeAgain;
-                    div.appendChild(wouldTakeAgainText);
-                    topTagsLabel = document.createElement("p");
-                    topTagsLabel.textContent = "Top Tags:";
-                    div.appendChild(topTagsLabel);
-                    topTagsFirstLineText = document.createElement("p");
-                    topTagsSecondLineText = document.createElement("p");
-                    for (let i = 0; i < topTags.length; i++) {
-                        let tag = topTags[i][0];
-                        if (i < 3) {
-                            topTagsFirstLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                    if (topTags.length > 0) {
+                        topTagsLabel = document.createElement("p");
+                        topTagsLabel.textContent = "Top Tags:";
+                        div.appendChild(topTagsLabel);
+                        topTagsFirstLineText = document.createElement("p");
+                        topTagsSecondLineText = document.createElement("p");
+                        for (let i = 0; i < topTags.length; i++) {
+                            let tag = topTags[i][0];
+                            if (i < 3) {
+                                topTagsFirstLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                            }
+                            else{
+                                topTagsSecondLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                            }
                         }
-                        else{
-                            topTagsSecondLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
+                        div.appendChild(topTagsFirstLineText);
+                        if (topTagsSecondLineText.childNodes) {
+                            div.appendChild(topTagsSecondLineText);
                         }
-                    }
-                    div.appendChild(topTagsFirstLineText);
-                    if (topTagsSecondLineText.childNodes) {
-                        div.appendChild(topTagsSecondLineText);
                     }
                     div.appendChild(document.createElement("br"));
                 }
