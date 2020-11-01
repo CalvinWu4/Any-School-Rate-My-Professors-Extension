@@ -3,7 +3,7 @@ let savedRecords = JSON.parse(localStorage.getItem("records"));
 let waitForFetch;
 
 // Add ratings if there are already records saved
-if (savedRecords) {
+if (savedRecords.length > 0) {
     AddRatings();
 }
 // Wait for records to be fetched before adding ratings
