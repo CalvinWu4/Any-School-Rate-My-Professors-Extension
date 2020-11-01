@@ -59,7 +59,7 @@ let conditions = [];
 urls.forEach(url => 
     conditions.push(
         new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: { hostEquals: new URL(url).hostname, pathEquals: new URL(url).pathname }
+        pageUrl: { hostEquals: new URL(url).hostname }
       })
 ))
 

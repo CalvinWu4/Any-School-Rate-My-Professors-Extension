@@ -3,7 +3,7 @@ let savedRecords = JSON.parse(localStorage.getItem("records"));
 let waitForFetch;
 
 // Add ratings if there are already records saved
-if (savedRecords.length > 0) {
+if (savedRecords) {
     AddRatings();
 }
 // Wait for records to be fetched before adding ratings
@@ -15,8 +15,7 @@ else{
 chrome.runtime.onMessage.addListener(function(message) {
     const records = message.records;
     savedRecords = records.filter(record => 
-        new URL(record.fields.URL).hostname === window.location.hostname && 
-        new URL(record.fields.URL).pathname === window.location.pathname);
+        new URL(record.fields.URL).hostname === window.location.hostname);
     localStorage.setItem("records", JSON.stringify(savedRecords));
     savedRecords = JSON.parse(localStorage.getItem("records"));
     if (waitForFetch) {
