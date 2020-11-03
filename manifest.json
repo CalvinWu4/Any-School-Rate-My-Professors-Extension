@@ -12,6 +12,7 @@
 		"tooltip.css",
 		"jquery-3.3.1.min.js",
 		"node_modules/papaparse/papaparse.min.js",
+		"node_modules/compromise/builds/compromise.js",
 		"names.js",
 		"addedNicknames.js",
 		"arrive.min.js",

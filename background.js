@@ -88,6 +88,9 @@ function injectCode(tabId) {
         file: "node_modules/papaparse/papaparse.min.js"
     });
     chrome.tabs.executeScript({
+        file: "node_modules/compromise/builds/compromise.js"
+    });
+    chrome.tabs.executeScript({
         file: "names.js"
     });
     chrome.tabs.executeScript({
