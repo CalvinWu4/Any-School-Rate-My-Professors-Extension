@@ -8,6 +8,7 @@
         "https://*/*"
 	],
 	"web_accessible_resources": [
+		"prof-rating.css",
 		"tooltipster/dist/css/tooltipster.main.min.css",
 		"tooltip.css",
 		"jquery-3.3.1.min.js",
