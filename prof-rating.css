@@ -1,0 +1,8 @@
+.prof-rating {
+    color: #0000FF;
+    text-decoration: underline;
+}
+
+.prof-rating:visited {
+    color: #0000FF;
+}

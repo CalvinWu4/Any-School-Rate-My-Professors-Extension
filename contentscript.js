@@ -96,8 +96,10 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
 
         // Append new anchor element
         const newElem = document.createElement('a');
+        newElem.classList.add('prof-rating');
         newElem.textContent = element.textContent;
         element.textContent = '';
+        newElem.setAttribute('target', '_blank');
         element.appendChild(newElem);
         
         // Add professor data if found
@@ -113,7 +115,6 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
             newElem.textContent += ` (${profRating ? profRating : 'N/A'})`;
             newElem.setAttribute('href', profURL);
-            newElem.setAttribute('target', '_blank');
 
             let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
             AddTooltip(newElem, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept);
@@ -134,7 +135,6 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
                 newElem.textContent += " (NF)";
                 newElem.setAttribute('href', 
                 `https://www.ratemyprofessors.com/search.jsp?query=${originalFirstName}+${middleName ? middleName + '+': ''}${lastName}`);
-                newElem.setAttribute('target', '_blank');
             }
         }        
     });
