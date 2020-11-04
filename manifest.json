@@ -2,12 +2,27 @@
 	"name" : "Rate My Professors for RIT Tiger Center",
 	"version" : "1.0.4",
 	"description" : "Shows the Rate My Professors rating of professors while searching classes on Tiger Center.",
-	"permissions": ["https://search-production.ratemyprofessors.com/*"],
-	"content_scripts": [ {
-		"css": [ "tooltipster/dist/css/tooltipster.main.min.css", "tooltip.css" ],
-		"js": [ "jquery-3.3.1.min.js", "node_modules/papaparse/papaparse.min.js", "names.js", "addedNicknames.js", "arrive.min.js", "tooltipster/dist/js/tooltipster.bundle.min.js" ,"background.js", "contentscript.js" ],
-		"matches": [ "https://tigercenter.rit.edu/tigerCenterApp/api/class-search*" ]
-	  }],
+	"permissions": ["https://search-production.ratemyprofessors.com/*", "activeTab", "declarativeContent", "storage"],
+	"optional_permissions": [
+        "http://*/*",
+        "https://*/*"
+	],
+	"web_accessible_resources": [
+		"prof-rating.css",
+		"tooltipster/dist/css/tooltipster.main.min.css",
+		"tooltip.css",
+		"jquery-3.3.1.min.js",
+		"node_modules/papaparse/papaparse.min.js",
+		"node_modules/compromise/builds/compromise.js",
+		"names.js",
+		"addedNicknames.js",
+		"arrive.min.js",
+		"tooltipster/dist/js/tooltipster.bundle.min.js",
+		"contentscript.js"
+	],
+	"page_action": {
+		"default_icon": "images/icon16-gray.png"
+	},
 	"background": {
 		"scripts": ["background.js"],
 		"persistent": false

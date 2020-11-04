@@ -1,28 +1,107 @@
-const nicknames = getNicknames();
+let savedRecords = JSON.parse(localStorage.getItem("records"));
 
-// Add professor ratings
-const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
-document.arrive('.col-xs-2 [href*="mailto:"]', function(){
-    const fullName = replaceCustomNicknames(this.textContent);
-    const splitName = fullName.split(' ');
-    const firstName = splitName[0].toLowerCase().trim();
-    const lastName = splitName.slice(-1)[0].toLowerCase().trim();
-    let middleName;
-    if (splitName.length > 2) {
-        middleName = splitName[0];
-        middleName = middleName.toLowerCase().trim();
+let waitForFetch;
+
+// Add ratings if there are already records saved
+if (savedRecords && savedRecords.length > 0) {
+    AddRatings();
+}
+// Wait for records to be fetched before adding ratings
+else{
+    waitForFetch = true;
+}
+
+// Refresh records from background fetch
+chrome.runtime.onMessage.addListener(function(message) {
+    const records = message.records;
+    savedRecords = records.filter(record => 
+        new URL(record.fields.URL).hostname === window.location.hostname);
+    localStorage.setItem("records", JSON.stringify(savedRecords));
+    savedRecords = JSON.parse(localStorage.getItem("records"));
+    if (waitForFetch) {
+        waitForFetch = false;
+        AddRatings();
     }
-    url = urlBase + firstName + "+" + lastName + "+AND+schoolid_s%3A807";
-    const runAgain = true;
-    // Query Rate My Professor with the professor's name
-    GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0);
 });
 
-function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index) {
+// Add professor ratings
+function AddRatings() {
+    const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
+    // For professor names that are loaded when the page is loaded
+    [...document.querySelectorAll(savedRecords[0].fields.Selector)]
+    .forEach(element => {
+        const fullName = replaceCustomNicknames(
+            nlp(element.textContent).normalize({
+                whitespace: true, 
+                case: true, 
+                punctuation: false, 
+                unicode: true,
+                contractions: false,
+                acronyms: false, 
+                parentheses: false, 
+                possessives: true, 
+                plurals: false,
+                verbs: false,  
+                honorifics: true}).people().out());
+        const splitName = fullName.split(' ');
+        const firstName = splitName[0].toLowerCase().trim();
+        const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+        let middleName;
+        if (splitName.length > 2) {
+            middleName = splitName[0];
+            middleName = middleName.toLowerCase().trim();
+        }
+        const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+        const runAgain = true;
+        // Query Rate My Professor with the professor's name
+        GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
+    });
+    // For professor names that take time to load
+    document.arrive(savedRecords[0].fields.Selector, function(){
+        const fullName = replaceCustomNicknames(
+            nlp(this.textContent).normalize({
+                whitespace: true, 
+                case: true, 
+                punctuation: false, 
+                unicode: true,
+                contractions: false,
+                acronyms: false, 
+                parentheses: false, 
+                possessives: true, 
+                plurals: false,
+                verbs: false,  
+                honorifics: true}).people().out());
+        const splitName = fullName.split(' ');
+        const firstName = splitName[0].toLowerCase().trim();
+        const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+        let middleName;
+        if (splitName.length > 2) {
+            middleName = splitName[0];
+            middleName = middleName.toLowerCase().trim();
+        }
+        url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+        const runAgain = true;
+        // Query Rate My Professor with the professor's name
+        GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
+    });
+}
+
+const nicknames = getNicknames();
+
+function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index, urlBase) {
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const resp = response.JSONresponse;
         const numFound = resp.response.numFound;
         const doc = resp.response.docs[0];
+
+        // Append new anchor element
+        const newElem = document.createElement('a');
+        newElem.classList.add('prof-rating');
+        newElem.textContent = element.textContent;
+        element.textContent = '';
+        newElem.setAttribute('target', '_blank');
+        element.appendChild(newElem);
+        
         // Add professor data if found
         if (numFound > 0 && doc) {
             const profID = doc.pk_id;
@@ -34,30 +113,28 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             const easyRating = doc.averageeasyscore_rf && doc.averageeasyscore_rf.toFixed(1);
 
             const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
-            element.textContent += ` (${profRating ? profRating : 'N/A'})`;
-            element.setAttribute('href', profURL);
-            element.setAttribute('target', '_blank');
+            newElem.textContent += ` (${profRating ? profRating : 'N/A'})`;
+            newElem.setAttribute('href', profURL);
 
             let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
-            AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept);
+            AddTooltip(newElem, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept);
         } else {
             // Try again with professor's middle name if it didn't work the first time
             if (middleName && runAgain) {
                 firstName = middleName;
                 url = urlBase + firstName + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, element, lastName, firstName, middleName, false, null);
+                GetProfessorRating(url, newElem, lastName, firstName, middleName, false, null, urlBase);
             }
             // Try again with nicknames for the professor's first name
             else if (runAgain && nicknames[originalFirstName]) {
                 url = urlBase + nicknames[originalFirstName][index] + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, element, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1);
+                GetProfessorRating(url, newElem, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1, urlBase);
             }
             // Set link to search results if not found
             else {
-                element.textContent += " (NF)";
-                element.setAttribute('href', 
+                newElem.textContent += " (NF)";
+                newElem.setAttribute('href', 
                 `https://www.ratemyprofessors.com/search.jsp?query=${originalFirstName}+${middleName ? middleName + '+': ''}${lastName}`);
-                element.setAttribute('target', '_blank');
             }
         }        
     });
