@@ -97,9 +97,6 @@ function injectCode(tabId) {
         file: "names.js"
     });
     chrome.tabs.executeScript({
-        file: "addedNicknames.js"
-    });
-    chrome.tabs.executeScript({
         file: "arrive.min.js"
     });
     chrome.tabs.executeScript({

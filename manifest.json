@@ -15,7 +15,6 @@
 		"node_modules/papaparse/papaparse.min.js",
 		"node_modules/compromise/builds/compromise.js",
 		"names.js",
-		"addedNicknames.js",
 		"arrive.min.js",
 		"tooltipster/dist/js/tooltipster.bundle.min.js",
 		"contentscript.js"

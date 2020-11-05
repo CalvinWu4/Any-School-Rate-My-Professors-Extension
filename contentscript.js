@@ -30,7 +30,7 @@ function AddRatings() {
     // For professor names that are loaded when the page is loaded
     [...document.querySelectorAll(savedRecords[0].fields.Selector)]
     .forEach(element => {
-        const fullName = replaceCustomNicknames(
+        const fullName =
             nlp(element.textContent).normalize({
                 whitespace: true, 
                 case: true, 
@@ -42,7 +42,7 @@ function AddRatings() {
                 possessives: true, 
                 plurals: false,
                 verbs: false,  
-                honorifics: true}).people().out());
+                honorifics: true}).people().out();
         const splitName = fullName.split(' ');
         const firstName = splitName[0].toLowerCase().trim();
         const lastName = splitName.slice(-1)[0].toLowerCase().trim();
@@ -58,7 +58,7 @@ function AddRatings() {
     });
     // For professor names that take time to load
     document.arrive(savedRecords[0].fields.Selector, function(){
-        const fullName = replaceCustomNicknames(
+        const fullName =
             nlp(this.textContent).normalize({
                 whitespace: true, 
                 case: true, 
@@ -70,7 +70,7 @@ function AddRatings() {
                 possessives: true, 
                 plurals: false,
                 verbs: false,  
-                honorifics: true}).people().out());
+                honorifics: true}).people().out();
         const splitName = fullName.split(' ');
         const firstName = splitName[0].toLowerCase().trim();
         const lastName = splitName.slice(-1)[0].toLowerCase().trim();
