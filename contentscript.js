@@ -30,20 +30,26 @@ function AddRatings() {
     // For professor names that are loaded when the page is loaded
     [...document.querySelectorAll(savedRecords[0].fields.Selector)]
     .forEach(element => {
-        const fullName =
-            nlp(element.textContent).normalize({
-                whitespace: true, 
-                case: true, 
-                punctuation: false, 
-                unicode: true,
-                contractions: false,
-                acronyms: false, 
-                parentheses: false, 
-                possessives: true, 
-                plurals: false,
-                verbs: false,  
-                honorifics: true}).people().out();
-        const splitName = fullName.split(' ');
+        let fullName = element.textContent;
+        fullName = nlp(fullName).normalize({
+            whitespace: true, 
+            case: true, 
+            punctuation: false, 
+            unicode: true,
+            contractions: false,
+            acronyms: false, 
+            parentheses: false, 
+            possessives: true, 
+            plurals: false,
+            verbs: false,  
+            honorifics: true}).out();
+        let splitName = fullName.split(' ');
+        const parsedFullName = nlp(fullName).people().out();
+        const parsedSplitName = parsedFullName.split(' ');
+        if (parsedSplitName.length > 1) {
+            fullName = parsedFullName;
+            splitName = parsedSplitName;
+        }
         const firstName = splitName[0].toLowerCase().trim();
         const lastName = splitName.slice(-1)[0].toLowerCase().trim();
         let middleName;
@@ -58,20 +64,26 @@ function AddRatings() {
     });
     // For professor names that take time to load
     document.arrive(savedRecords[0].fields.Selector, function(){
-        const fullName =
-            nlp(this.textContent).normalize({
-                whitespace: true, 
-                case: true, 
-                punctuation: false, 
-                unicode: true,
-                contractions: false,
-                acronyms: false, 
-                parentheses: false, 
-                possessives: true, 
-                plurals: false,
-                verbs: false,  
-                honorifics: true}).people().out();
-        const splitName = fullName.split(' ');
+        let fullName = this.textContent;
+        fullName = nlp(fullName).normalize({
+            whitespace: true, 
+            case: true, 
+            punctuation: false, 
+            unicode: true,
+            contractions: false,
+            acronyms: false, 
+            parentheses: false, 
+            possessives: true, 
+            plurals: false,
+            verbs: false,  
+            honorifics: true}).out();
+        let splitName = fullName.split(' ');
+        const parsedFullName = nlp(fullName).people().out();
+        const parsedSplitName = parsedFullName.split(' ');
+        if (parsedSplitName.length > 1) {
+            fullName = parsedFullName;
+            splitName = parsedSplitName;
+        }
         const firstName = splitName[0].toLowerCase().trim();
         const lastName = splitName.slice(-1)[0].toLowerCase().trim();
         let middleName;
