@@ -27,8 +27,13 @@ chrome.runtime.onMessage.addListener(function(message) {
 // Add professor ratings
 function AddRatings() {
     const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
+    // Split CSS selectors by new line
+    const selectors = savedRecords[0].fields.Selector.split(/\r?\n/).
+        map(function(selector) {
+            return selector.trim();
+        });
     // For professor names that are loaded when the page is loaded
-    [...document.querySelectorAll(savedRecords[0].fields.Selector)]
+    [...document.querySelectorAll(selectors)]
     .forEach(element => {
         let fullName = element.textContent;
         fullName = nlp(fullName).normalize({
@@ -62,40 +67,42 @@ function AddRatings() {
         // Query Rate My Professor with the professor's name
         GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
     });
+    selectors.forEach(selector => {
     // For professor names that take time to load
-    document.arrive(savedRecords[0].fields.Selector, function(){
-        let fullName = this.textContent;
-        fullName = nlp(fullName).normalize({
-            whitespace: true, 
-            case: true, 
-            punctuation: false, 
-            unicode: true,
-            contractions: false,
-            acronyms: false, 
-            parentheses: false, 
-            possessives: true, 
-            plurals: false,
-            verbs: false,  
-            honorifics: true}).out();
-        let splitName = fullName.split(' ');
-        const parsedFullName = nlp(fullName).people().out();
-        const parsedSplitName = parsedFullName.split(' ');
-        if (parsedSplitName.length > 1) {
-            fullName = parsedFullName;
-            splitName = parsedSplitName;
-        }
-        const firstName = splitName[0].toLowerCase().trim();
-        const lastName = splitName.slice(-1)[0].toLowerCase().trim();
-        let middleName;
-        if (splitName.length > 2) {
-            middleName = splitName[0];
-            middleName = middleName.toLowerCase().trim();
-        }
-        url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
-        const runAgain = true;
-        // Query Rate My Professor with the professor's name
-        GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
-    });
+        document.arrive(selector, function(){
+            let fullName = this.textContent;
+            fullName = nlp(fullName).normalize({
+                whitespace: true, 
+                case: true, 
+                punctuation: false, 
+                unicode: true,
+                contractions: false,
+                acronyms: false, 
+                parentheses: false, 
+                possessives: true, 
+                plurals: false,
+                verbs: false,  
+                honorifics: true}).out();
+            let splitName = fullName.split(' ');
+            const parsedFullName = nlp(fullName).people().out();
+            const parsedSplitName = parsedFullName.split(' ');
+            if (parsedSplitName.length > 1) {
+                fullName = parsedFullName;
+                splitName = parsedSplitName;
+            }
+            const firstName = splitName[0].toLowerCase().trim();
+            const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+            let middleName;
+            if (splitName.length > 2) {
+                middleName = splitName[0];
+                middleName = middleName.toLowerCase().trim();
+            }
+            url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+            const runAgain = true;
+            // Query Rate My Professor with the professor's name
+            GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
+        })
+    })
 }
 
 const nicknames = getNicknames();
