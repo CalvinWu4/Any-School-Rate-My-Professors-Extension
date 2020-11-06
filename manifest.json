@@ -1,7 +1,7 @@
 {
-	"name" : "Rate My Professors for RIT Tiger Center",
-	"version" : "1.0.4",
-	"description" : "Shows the Rate My Professors rating of professors while searching classes on Tiger Center.",
+	"name" : "Multi-College Rate My Professors Extension",
+	"version" : "1.0.0",
+	"description" : "Shows the Rate My Professors rating of professors while searching classes.",
 	"permissions": ["https://search-production.ratemyprofessors.com/*", "activeTab", "declarativeContent", "storage"],
 	"optional_permissions": [
         "http://*/*",
