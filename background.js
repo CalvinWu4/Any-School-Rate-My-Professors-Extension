@@ -52,25 +52,40 @@ function getData() {
         });
 }
 
-getData();
-
-// Rules for when to show page action and icon
+// Show colored icon on saved URLs
 let conditions = [];
 urls.forEach(url => 
     conditions.push(
         new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: { hostEquals: new URL(url).hostname }
-      })
-))
+            pageUrl: { hostEquals: new URL(url).hostname }
+        })
+    )
+)
 
-const rule = {
+const showIconRule = {
     conditions: conditions,
-    actions: [ new chrome.declarativeContent.ShowPageAction(), new chrome.declarativeContent.SetIcon({path:'images/icon16.png'}) ]
+    actions: [ new chrome.declarativeContent.SetIcon({path:'images/icon16.png'}) ]
   };
+
+// Always show page action
+const showPageActionRule = {
+    conditions: [
+        new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: { schemes: ['http', 'https'] } // Match every URL
+        })
+    ],
+    actions: [ new chrome.declarativeContent.ShowPageAction() ]
+};
+
   
 chrome.runtime.onInstalled.addListener(function(details) {
+    // Get data on first install
+    if(details.reason == "install"){
+        getData();
+    }
+    // Refresh rules
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-        chrome.declarativeContent.onPageChanged.addRules([rule]);
+        chrome.declarativeContent.onPageChanged.addRules([showIconRule, showPageActionRule]);
     });
 });
   
@@ -109,13 +124,18 @@ function injectCode(tabId) {
     });
 }
 
-// Give host permission to allow for injection of code
 chrome.pageAction.onClicked.addListener(function(tab) {
-    requestHostPermission(tab)
+    // If URL is saved, prompt host permission to allow for injection of code 
+    if (urls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
+        requestHostPermission(tab);
+    }
+    // Refresh URLs
+    else{
+        getData();
+    }
 });
 
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
     injectCode(tabId);
-    getData();
 });
