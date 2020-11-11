@@ -38,6 +38,8 @@ function AddRatings() {
             }
             return selector;
         });
+    // Only add link to the appended rating
+    const linkifyRating = savedRecords[0].fields["Only Add Link To Rating"];
     // For professor names that are loaded when the page is loaded
     [...document.querySelectorAll(selectors)]
     .forEach(element => {
@@ -71,7 +73,7 @@ function AddRatings() {
         const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
         const runAgain = true;
         // Query Rate My Professor with the professor's name
-        GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
+        GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, firstName, 0, urlBase, linkifyRating);
     });
     selectors.forEach(selector => {
     // For professor names that take time to load
@@ -107,7 +109,7 @@ function AddRatings() {
                 url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
                 const runAgain = true;
                 // Query Rate My Professor with the professor's name
-                GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase);
+                GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase, linkifyRating);
             }
         })
     })
@@ -115,18 +117,26 @@ function AddRatings() {
 
 const nicknames = getNicknames();
 
-function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index, urlBase) {
+function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index, urlBase, linkifyRating = false) {
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const resp = response.JSONresponse;
         const numFound = resp.response.numFound;
         const doc = resp.response.docs[0];
-
-        // Append new anchor element
+        
         const newElem = document.createElement('a');
+        // Append new anchor element
         newElem.classList.add('prof-rating');
-        newElem.textContent = element.textContent;
-        element.textContent = '';
+        if (!linkifyRating) {
+            newElem.textContent = element.textContent + ' ';
+            element.textContent = '';
+        }
+        else {
+            element.textContent += ' ';
+        }
         newElem.setAttribute('target', '_blank');
+        newElem.addEventListener('click', function (e) {
+			e.stopPropagation();
+		});
         element.appendChild(newElem);
         
         // Add professor data if found
@@ -140,7 +150,7 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             const easyRating = doc.averageeasyscore_rf && doc.averageeasyscore_rf.toFixed(1);
 
             const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
-            newElem.textContent += ` (${profRating ? profRating : 'N/A'})`;
+            newElem.textContent += `(${profRating ? profRating : 'N/A'})`;
             newElem.setAttribute('href', profURL);
 
             let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
@@ -159,7 +169,7 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             }
             // Set link to search results if not found
             else {
-                newElem.textContent += " (NF)";
+                newElem.textContent += "(NF)";
                 newElem.setAttribute('href', 
                 `https://www.ratemyprofessors.com/search.jsp?query=${originalFirstName}+${middleName ? middleName + '+': ''}${lastName}`);
             }
