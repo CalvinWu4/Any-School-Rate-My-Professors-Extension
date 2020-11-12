@@ -12,7 +12,7 @@ Professors' names will now link to their Rate My Professors page (or the search 
 - Fill in the required fields to add your college's class search website. Read the field descriptions to help you.
 - Install this extension if you haven't already and go to the URL of your added college's class search website.
 - If the extension icon is not lit up, click on it to refresh the supported URL's. Click on the lit up icon to allow the extension to have permissions to the website.
-- The page will refresh and rating of professors will be shown on the page.
+- The page will refresh and professors ratings will be shown on the page.
 - Changes from the Airtable will be reflected whenever you click on the extension icon.
 
 ### Screenshots
