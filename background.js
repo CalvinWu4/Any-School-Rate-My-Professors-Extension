@@ -54,7 +54,7 @@ function getData() {
 
 // Show colored icon on saved URLs
 let conditions = [];
-urls.forEach(url => 
+urls && urls.forEach(url => 
     conditions.push(
         new chrome.declarativeContent.PageStateMatcher({
             pageUrl: { hostEquals: new URL(url).hostname }
@@ -126,7 +126,7 @@ function injectCode(tabId) {
 
 chrome.pageAction.onClicked.addListener(function(tab) {
     // If URL is saved, prompt host permission to allow for injection of code 
-    if (urls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
+    if (urls && urls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
         requestHostPermission(tab);
     }
     // Refresh URLs
