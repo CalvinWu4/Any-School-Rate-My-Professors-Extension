@@ -35,8 +35,8 @@ if (savedRecords) {
 }
 
 // Sync saved data with airtable data
-function getData() {
-    fetch('https://airtable.calvinwu4.workers.dev/')
+async function getData() {
+    await fetch('https://airtable.calvinwu4.workers.dev/')
         .then(response => response.json())
         .then(data => { 
             records = data.records.filter(record => 
@@ -47,23 +47,30 @@ function getData() {
             if (JSON.stringify(savedRecords) != JSON.stringify(records)) {
                 savedRecords = records;
                 localStorage.setItem("records", JSON.stringify(records));
+                // Refresh URLs
+                urls = savedRecords.map(record => record.fields.URL);
                 chrome.runtime.reload();
             }
         });
 }
 
-// Show colored icon on saved URLs
+// Conditions of which to light up icon
 let conditions = [];
-urls && urls.forEach(url => 
-    conditions.push(
-        new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: { hostEquals: new URL(url).hostname }
-        })
-    )
-)
+
+function getConditions(){
+    conditions = [];
+    urls && urls.forEach(url => {
+        conditions.push(
+            new chrome.declarativeContent.PageStateMatcher({
+                pageUrl: { hostEquals: new URL(url).hostname }
+            })
+        )
+    })
+    return conditions;
+}
 
 const showIconRule = {
-    conditions: conditions,
+    conditions: getConditions(),
     actions: [ new chrome.declarativeContent.SetIcon({path:'images/icon16.png'}) ]
   };
 
@@ -81,7 +88,9 @@ const showPageActionRule = {
 chrome.runtime.onInstalled.addListener(function(details) {
     // Get data on first install
     if(details.reason == "install"){
-        getData();
+        getData().then(function(){
+            getConditions();
+        });
     }
     // Refresh rules
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -125,17 +134,25 @@ function injectCode(tabId) {
 }
 
 chrome.pageAction.onClicked.addListener(function(tab) {
-    // If URL is saved, prompt host permission to allow for injection of code 
-    if (urls && urls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
-        requestHostPermission(tab);
-    }
-    // Refresh URLs
-    else{
-        getData();
-    }
+    // If URL is saved, prompt host permission to allow for injection of code
+    getData().then(function(){
+        chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+            chrome.declarativeContent.onPageChanged.addRules([showIconRule, showPageActionRule]);
+        });    
+        if (urls && urls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
+            requestHostPermission(tab);
+        }
+    });
 });
 
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
-    injectCode(tabId);
+    chrome.permissions.contains({
+        origins: [tab.url + "*"]
+      }, function(result) {
+        if (result) {
+          // The extension has the permissions.
+          injectCode(tabId);
+        }
+      });
 });
