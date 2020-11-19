@@ -2,7 +2,7 @@
   "name": "multi-college-rate-my-professor-extension",
   "version": "1.0.0",
   "dependencies": {
-    "compromise": "^13.6.0",
+    "compromise": "^13.7.0",
     "papaparse": "^5.3.0"
   },
   "devDependencies": {},
