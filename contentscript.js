@@ -73,7 +73,7 @@ function AddRatings() {
         const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
         const runAgain = true;
         // Query Rate My Professor with the professor's name
-        GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, firstName, 0, urlBase, linkifyRating);
+        GetProfessorRating(url, element, fullName, lastName, firstName, middleName, runAgain, firstName, 0, urlBase, linkifyRating);
     });
     selectors.forEach(selector => {
     // For professor names that take time to load
@@ -109,7 +109,7 @@ function AddRatings() {
                 url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
                 const runAgain = true;
                 // Query Rate My Professor with the professor's name
-                GetProfessorRating(url, this, lastName, firstName, middleName, runAgain, firstName, 0, urlBase, linkifyRating);
+                GetProfessorRating(url, this, fullName, lastName, firstName, middleName, runAgain, firstName, 0, urlBase, linkifyRating);
             }
         })
     })
@@ -117,7 +117,7 @@ function AddRatings() {
 
 const nicknames = getNicknames();
 
-function GetProfessorRating(url, element, lastName, firstName, middleName, runAgain, originalFirstName, index, urlBase, linkifyRating = false) {
+function GetProfessorRating(url, element, fullName, lastName, firstName, middleName, runAgain, originalFirstName, index, urlBase, linkifyRating = false) {
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const resp = response.JSONresponse;
         const numFound = resp.response.numFound;
@@ -142,8 +142,7 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
         // Add professor data if found
         if (numFound > 0 && doc) {
             const profID = doc.pk_id;
-            const realFirstName = doc.teacherfirstname_t;
-            const realLastName = doc.teacherlastname_t;
+            const realFullName = doc.teacherfullname_s;
             const dept = doc.teacherdepartment_s;
             const profRating = doc.averageratingscore_rf && doc.averageratingscore_rf.toFixed(1);
             const numRatings = doc.total_number_of_ratings_i;
@@ -154,18 +153,18 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
             newElem.setAttribute('href', profURL);
 
             let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
-            AddTooltip(newElem, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept);
+            AddTooltip(newElem, allprofRatingsURL, realFullName, profRating, numRatings, easyRating, dept);
         } else {
             // Try again with professor's middle name if it didn't work the first time
             if (middleName && runAgain) {
                 firstName = middleName;
                 url = urlBase + firstName + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, newElem, lastName, firstName, middleName, false, null, urlBase);
+                GetProfessorRating(url, newElem, fullName, lastName, firstName, middleName, false, null, urlBase);
             }
             // Try again with nicknames for the professor's first name
             else if (runAgain && nicknames[originalFirstName]) {
                 url = urlBase + nicknames[originalFirstName][index] + "+" + lastName + "+AND+schoolid_s%3A807";
-                GetProfessorRating(url, newElem, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1, urlBase);
+                GetProfessorRating(url, newElem, fullName, lastName, nicknames[originalFirstName][index], middleName, nicknames[originalFirstName][index+1], originalFirstName, index+1, urlBase);
             }
             // Set link to search results if not found
             else {
@@ -177,7 +176,7 @@ function GetProfessorRating(url, element, lastName, firstName, middleName, runAg
     });
 }
 
-function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, profRating, numRatings, easyRating, dept) {
+function AddTooltip(element, allprofRatingsURL, realFullName, profRating, numRatings, easyRating, dept) {
     let ratings = [];
     function getRatings(url){
         chrome.runtime.sendMessage({ url: url }, function (response) { 
@@ -197,15 +196,13 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                 let notHelpCount;
                 let wouldTakeAgainText;
                 let easyRatingText;
-                let topTagsLabel;
-                let topTagsFirstLineText;
 
                 const div = document.createElement("div");
                 const title = document.createElement("h3");
                 title.textContent = "Rate My Professor Details";
                 div.appendChild(title);
                 const professorText = document.createElement("p");
-                professorText.textContent = `${realFirstName} ${realLastName}, Professor in ${dept}`;
+                professorText.textContent = `${realFullName}, Professor in ${dept}`;
                 div.appendChild(professorText);
                 const avgRatingText = document.createElement("p");
                 avgRatingText.textContent = `Overall Quality: ${profRating ? profRating : 'N/A'}/5`
@@ -246,31 +243,22 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                     easyRatingText = document.createElement("p");
                     easyRatingText.textContent = `Level of Difficulty: ${easyRating}`;
                     div.appendChild(easyRatingText);
+                    wouldTakeAgainText = document.createElement("p");
                     if (ratings.length >= 8 && wouldTakeAgainNACount < (ratings.length / 2)) {
                         wouldTakeAgain = ((wouldTakeAgain / (ratings.length - wouldTakeAgainNACount)) * 100).toFixed(0).toString() + "%";
-                        wouldTakeAgainText = document.createElement("p");
-                        wouldTakeAgainText.textContent = "Would take again: " + wouldTakeAgain;
-                        div.appendChild(wouldTakeAgainText);
+                    } else {
+                        wouldTakeAgain = "N/A";
                     }
+                    wouldTakeAgainText.textContent = "Would take again: " + wouldTakeAgain;
+                    div.appendChild(wouldTakeAgainText);
+                    const topTagsText = document.createElement("p");
+                    topTagsText.textContent = "Top Tags: ";
                     if (topTags.length > 0) {
-                        topTagsLabel = document.createElement("p");
-                        topTagsLabel.textContent = "Top Tags:";
-                        div.appendChild(topTagsLabel);
-                        topTagsFirstLineText = document.createElement("p");
-                        topTagsSecondLineText = document.createElement("p");
                         for (let i = 0; i < topTags.length; i++) {
                             let tag = topTags[i][0];
-                            if (i < 3) {
-                                topTagsFirstLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
-                            }
-                            else{
-                                topTagsSecondLineText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
-                            }
+                            topTagsText.textContent += `${tag}${i !== topTags.length - 1 ? ", " : ""}`;
                         }
-                        div.appendChild(topTagsFirstLineText);
-                        if (topTagsSecondLineText.childNodes) {
-                            div.appendChild(topTagsSecondLineText);
-                        }
+                        div.appendChild(topTagsText);
                     }
                     div.appendChild(document.createElement("br"));
                 }
@@ -319,9 +307,10 @@ function AddTooltip(element, allprofRatingsURL, realFirstName, realLastName, pro
                             .tooltipster({
                                 animation: 'grow',
                                 theme: 'tooltipster-default',
-                                side: 'left',
+                                side: 'right',
                                 content: div,
                                 contentAsHTML: true,
+                                maxWidth: 400,
                                 delay: 100
                             })
                             .tooltipster('show');
