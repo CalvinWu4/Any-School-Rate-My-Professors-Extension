@@ -57,8 +57,12 @@ function AddRatings() {
             verbs: false,  
             honorifics: true}).out();
         if (fullName && fullName !== 'staff' && fullName !== 'tba') {
-            const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
-            fullName = `${commaSplitName[1].trim()} ${commaSplitName[0]}`;
+            // Handle names written as "lastName, firstName"
+            if (fullName.includes(',')) {
+                const commaSplitName = fullName.split(',');
+                fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
+                fullName = fullName.trim();
+            }
             const splitName = fullName.split(' ');
             const firstName = splitName[0];
             const lastName = splitName.slice(-1)[0];
@@ -101,8 +105,12 @@ function AddRatings() {
                     verbs: false,  
                     honorifics: true}).out();
                  if (fullName && fullName !== 'staff' && fullName !== 'tba') {
-                    const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
-                    fullName = `${commaSplitName[1].trim()} ${commaSplitName[0]}`;
+                    // Handle names written as "lastName, firstName"
+                    if (fullName.includes(',')) {
+                        const commaSplitName = fullName.split(',');
+                        fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
+                        fullName = fullName.trim();
+                    }
                     let splitName = fullName.split(' ');
                     const parsedFullName = nlp(fullName).people().out();
                     const parsedSplitName = parsedFullName.split(' ');
@@ -164,7 +172,7 @@ function GetProfessorRating(url, element, fullName, lastName, originalLastName, 
         // Add professor data if found
         if (numFound > 0 && doc) {
             // Use middle names in attempt to narrow down matches
-            if (numFound > 1 && middleNamesString === '') {
+            if (numFound > 1 && middleNamesString === '' && middleNames.length > 0) {
                 middleNamesString = middleNames.join('+');
                 GetProfessorRating(url, newElem, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, 
                     runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating);

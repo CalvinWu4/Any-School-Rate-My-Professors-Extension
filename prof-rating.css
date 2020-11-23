@@ -1,7 +1,7 @@
 .prof-rating {
-    color: #0000FF;
+    color: #0000FF !important;
 }
 
 .prof-rating:visited {
-    color: #0000FF;
+    color: #0000FF !important;
 }
