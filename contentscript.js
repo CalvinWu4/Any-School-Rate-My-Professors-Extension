@@ -56,19 +56,13 @@ function AddRatings() {
             plurals: false,
             verbs: false,  
             honorifics: true}).out();
-        let splitName = fullName.split(' ');
-        const parsedFullName = nlp(fullName).people().out();
-        const parsedSplitName = parsedFullName.split(' ');
-        if (parsedSplitName.length > 1) {
-            fullName = parsedFullName;
-            splitName = parsedSplitName;
-        }
-        const firstName = splitName[0].toLowerCase().trim();
-        const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+        const splitName = fullName.split(' ');
+        const firstName = splitName[0];
+        const lastName = splitName.slice(-1)[0];
         let middleNames = [];
         let originalMiddleNames = [];
         if (splitName.length > 2) {
-            middleNames = [...splitName.slice(1, splitName.length-1).map(name => name.toLowerCase().trim())];
+            middleNames = [...splitName.slice(1, splitName.length-1)];
             originalMiddleNames = [...middleNames];
         }
         const middleNamesString = '';
@@ -89,6 +83,7 @@ function AddRatings() {
         document.arrive(selector, function(){
             if (selector !== psMobileSelector || (selector === psMobileSelector && this.textContent.includes('Instructor: '))) {
                 let fullName = this.textContent;
+                fullName = fullName.replace('Instructor: ', '');
                 fullName = nlp(fullName).normalize({
                     whitespace: true, 
                     case: true, 
