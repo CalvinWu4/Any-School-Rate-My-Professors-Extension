@@ -56,29 +56,31 @@ function AddRatings() {
             plurals: false,
             verbs: false,  
             honorifics: true}).out();
-        const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
-        fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
-        const splitName = fullName.split(' ');
-        const firstName = splitName[0];
-        const lastName = splitName.slice(-1)[0];
-        let middleNames = [];
-        let originalMiddleNames = [];
-        if (splitName.length > 2) {
-            middleNames = [...splitName.slice(1, splitName.length-1)];
-            originalMiddleNames = [...middleNames];
+        if (fullName && fullName !== 'staff' && fullName !== 'tba') {
+            const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
+            fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
+            const splitName = fullName.split(' ');
+            const firstName = splitName[0];
+            const lastName = splitName.slice(-1)[0];
+            let middleNames = [];
+            let originalMiddleNames = [];
+            if (splitName.length > 2) {
+                middleNames = [...splitName.slice(1, splitName.length-1)];
+                originalMiddleNames = [...middleNames];
+            }
+            const middleNamesString = '';
+            // Try with no middle names at first
+            const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+            const runAgain = true;
+            const originalFirstName = firstName;
+            const originalLastName = lastName;
+            const index = 0;
+            const middleNamesRemovalStep = 0; // Track which middle name removal strategy we are on
+            const middleNameAsFirst = false;
+            // Query Rate My Professor with the professor's name
+            GetProfessorRating(url, element, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, runAgain, 
+                index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating);
         }
-        const middleNamesString = '';
-        // Try with no middle names at first
-        const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
-        const runAgain = true;
-        const originalFirstName = firstName;
-        const originalLastName = lastName;
-        const index = 0;
-        const middleNamesRemovalStep = 0; // Track which middle name removal strategy we are on
-        const middleNameAsFirst = false;
-        // Query Rate My Professor with the professor's name
-        GetProfessorRating(url, element, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, runAgain, 
-            index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating);
     });
     selectors.forEach(selector => {
     // For professor names that take time to load
@@ -98,36 +100,38 @@ function AddRatings() {
                     plurals: false,
                     verbs: false,  
                     honorifics: true}).out();
-                const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
-                fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
-                let splitName = fullName.split(' ');
-                const parsedFullName = nlp(fullName).people().out();
-                const parsedSplitName = parsedFullName.split(' ');
-                if (parsedSplitName.length > 1) {
-                    fullName = parsedFullName;
-                    splitName = parsedSplitName;
+                 if (fullName && fullName !== 'staff' && fullName !== 'tba') {
+                    const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
+                    fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
+                    let splitName = fullName.split(' ');
+                    const parsedFullName = nlp(fullName).people().out();
+                    const parsedSplitName = parsedFullName.split(' ');
+                    if (parsedSplitName.length > 1) {
+                        fullName = parsedFullName;
+                        splitName = parsedSplitName;
+                    }
+                    const firstName = splitName[0].toLowerCase().trim();
+                    const lastName = splitName.slice(-1)[0].toLowerCase().trim();
+                    let middleNames = [];
+                    let originalMiddleNames = [];
+                    if (splitName.length > 2) {
+                        middleNames = [...splitName.slice(1, splitName.length-1).map(name => name.toLowerCase().trim())];
+                        originalMiddleNames = [...middleNames];
+                    }
+                    const middleNamesString = '';
+                    // Try with no middle names at first
+                    const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+                    const runAgain = true;
+                    const originalFirstName = firstName;
+                    const originalLastName = lastName;
+                    const index = 0;
+                    const middleNamesRemovalStep = 0; // Track which middle name removal strategy we are on
+                    const middleNameAsFirst = false;
+                    // Query Rate My Professor with the professor's name
+                    GetProfessorRating(url, this, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, runAgain, 
+                        index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating);
                 }
-                const firstName = splitName[0].toLowerCase().trim();
-                const lastName = splitName.slice(-1)[0].toLowerCase().trim();
-                let middleNames = [];
-                let originalMiddleNames = [];
-                if (splitName.length > 2) {
-                    middleNames = [...splitName.slice(1, splitName.length-1).map(name => name.toLowerCase().trim())];
-                    originalMiddleNames = [...middleNames];
-                }
-                const middleNamesString = '';
-                // Try with no middle names at first
-                const url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
-                const runAgain = true;
-                const originalFirstName = firstName;
-                const originalLastName = lastName;
-                const index = 0;
-                const middleNamesRemovalStep = 0; // Track which middle name removal strategy we are on
-                const middleNameAsFirst = false;
-                // Query Rate My Professor with the professor's name
-                GetProfessorRating(url, this, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, runAgain, 
-                    index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating);
-                }
+            }
         })
     })
 }
