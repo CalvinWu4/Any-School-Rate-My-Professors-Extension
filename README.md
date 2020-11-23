@@ -22,6 +22,8 @@ To better find professors, this extension will try the first part of a hyphenate
 ### Todo
 - Support search given only a last name
 - Support iframes
+- Handle multiple professor names in one element
+- Search multiple colleges in URL
 
 ### Screenshots
 ![Screenshot](images/screenshot.png)
