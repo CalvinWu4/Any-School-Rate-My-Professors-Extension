@@ -1,5 +1,7 @@
 # Multi-College-Rate-My-Professor-Extension
 
+[**Chrome** extension][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/kkppfcnjkdgeocghmebigakljcpiamge.svg?label=%20">][link-chrome]
+
 This extension shows the [Rate My Professors](https://www.ratemyprofessors.com/) rating of professors while searching classes on websites provided in a community-edited Airtable. 
 
 ### Description
@@ -25,3 +27,5 @@ To better find professors, this extension will try the first part of a hyphenate
 ![Screenshot](images/screenshot.png)
 ![Screenshot](images/screenshot2.png)
 ![Screenshot](images/screenshot3.png)
+
+[link-chrome]: https://chrome.google.com/webstore/detail/multi-college-rate-my-pro/kkppfcnjkdgeocghmebigakljcpiamge?hl=en&authuser=0 "Version published on Chrome Web Store"
