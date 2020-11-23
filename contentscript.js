@@ -171,27 +171,19 @@ function GetProfessorRating(url, element, fullName, lastName, originalLastName, 
         
         // Add professor data if found
         if (numFound > 0 && doc) {
-            // Use middle names in attempt to narrow down matches
-            if (numFound > 1 && middleNamesString === '' && middleNames.length > 0) {
-                middleNamesString = middleNames.join('+');
-                GetProfessorRating(url, newElem, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, 
-                    runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating);
-            }
-            else {
-                const profID = doc.pk_id;
-                const realFullName = doc.teacherfullname_s;
-                const dept = doc.teacherdepartment_s;
-                const profRating = doc.averageratingscore_rf && doc.averageratingscore_rf.toFixed(1);
-                const numRatings = doc.total_number_of_ratings_i;
-                const easyRating = doc.averageeasyscore_rf && doc.averageeasyscore_rf.toFixed(1);
+            const profID = doc.pk_id;
+            const realFullName = doc.teacherfullname_s;
+            const dept = doc.teacherdepartment_s;
+            const profRating = doc.averageratingscore_rf && doc.averageratingscore_rf.toFixed(1);
+            const numRatings = doc.total_number_of_ratings_i;
+            const easyRating = doc.averageeasyscore_rf && doc.averageeasyscore_rf.toFixed(1);
 
-                const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
-                newElem.textContent += `(${profRating ? profRating : 'N/A'})`;
-                newElem.setAttribute('href', profURL);
+            const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
+            newElem.textContent += `(${profRating ? profRating : 'N/A'})`;
+            newElem.setAttribute('href', profURL);
 
-                let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
-                AddTooltip(newElem, allprofRatingsURL, realFullName, profRating, numRatings, easyRating, dept);
-            }
+            let allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
+            AddTooltip(newElem, allprofRatingsURL, realFullName, profRating, numRatings, easyRating, dept);
         } else {
             // Try again with only the maiden name of a hyphenated last name
             if (lastName.includes("-")) {
