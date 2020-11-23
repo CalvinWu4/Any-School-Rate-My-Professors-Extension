@@ -58,7 +58,7 @@ function AddRatings() {
             honorifics: true}).out();
         if (fullName && fullName !== 'staff' && fullName !== 'tba') {
             const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
-            fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
+            fullName = `${commaSplitName[1].trim()} ${commaSplitName[0]}`;
             const splitName = fullName.split(' ');
             const firstName = splitName[0];
             const lastName = splitName.slice(-1)[0];
@@ -102,7 +102,7 @@ function AddRatings() {
                     honorifics: true}).out();
                  if (fullName && fullName !== 'staff' && fullName !== 'tba') {
                     const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
-                    fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
+                    fullName = `${commaSplitName[1].trim()} ${commaSplitName[0]}`;
                     let splitName = fullName.split(' ');
                     const parsedFullName = nlp(fullName).people().out();
                     const parsedSplitName = parsedFullName.split(' ');
