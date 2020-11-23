@@ -111,18 +111,12 @@ function AddRatings() {
                         fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
                         fullName = fullName.trim();
                     }
-                    let splitName = fullName.split(' ');
-                    const parsedFullName = nlp(fullName).people().out();
-                    const parsedSplitName = parsedFullName.split(' ');
-                    if (parsedSplitName.length > 1) {
-                        fullName = parsedFullName;
-                        splitName = parsedSplitName;
-                    }
+                    const splitName = fullName.split(' ');
                     const firstName = splitName[0].toLowerCase().trim();
                     const lastName = splitName.slice(-1)[0].toLowerCase().trim();
                     let middleNames = [];
                     let originalMiddleNames = [];
-                    if (splitName.length > 2) {
+                                    if (splitName.length > 2) {
                         middleNames = [...splitName.slice(1, splitName.length-1).map(name => name.toLowerCase().trim())];
                         originalMiddleNames = [...middleNames];
                     }
