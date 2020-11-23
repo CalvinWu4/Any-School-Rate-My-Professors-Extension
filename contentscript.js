@@ -56,6 +56,8 @@ function AddRatings() {
             plurals: false,
             verbs: false,  
             honorifics: true}).out();
+        const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
+        fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
         const splitName = fullName.split(' ');
         const firstName = splitName[0];
         const lastName = splitName.slice(-1)[0];
@@ -96,6 +98,8 @@ function AddRatings() {
                     plurals: false,
                     verbs: false,  
                     honorifics: true}).out();
+                const commaSplitName = fullName.split(','); // Handle names written as "lastName, firstName"
+                fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
                 let splitName = fullName.split(' ');
                 const parsedFullName = nlp(fullName).people().out();
                 const parsedSplitName = parsedFullName.split(' ');
