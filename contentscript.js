@@ -213,7 +213,7 @@ function GetProfessorRating(url, element, fullName, lastName, originalLastName, 
                 else {
                     // Try again with the middle names as the last name (Maiden name and Spanish surnames)
                     middleNamesString = middleNames.join('+');
-                    url = `${urlBase}${firstName}+${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
+                    url = `${urlBase}${firstName}+${(middleNamesString === '' ? '' : middleNamesString + "+")}AND+schoolid_s%3A${savedRecords[0].fields.ID}`
                     if (middleNamesRemovalStep === 2) {
                         middleNames.pop(); // Try every combo of right-most middle name removed
                         if(middleNameAsFirst.length === 0) {
