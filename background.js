@@ -99,6 +99,7 @@ function getNicknames(){
         }
 
         localStorage.setItem("nicknames", JSON.stringify(nicknames));
+        localStorage.setItem("nicknames-retrieval-date", JSON.stringify(new Date()));
     })
 }
 
@@ -149,7 +150,6 @@ function injectCode(tabId) {
 }
 
 chrome.pageAction.onClicked.addListener(function(tab) {
-    getNicknames();
     // If URL is saved, prompt host permission to allow for injection of code
     getAirtableRecords().then(function(){
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -163,6 +163,13 @@ chrome.pageAction.onClicked.addListener(function(tab) {
 
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
+    const thirtydays = 2592000000; // ms in 30 days
+    const retrievalDate = JSON.parse(localStorage["nicknames-retrieval-date"]);
+    // Refresh saved nicknames every month
+    if (new Date().getTime() - new Date(retrievalDate).getTime() >= thirtydays) {
+        getNicknames();
+    }
+
     chrome.permissions.contains({
         origins: [tab.url + "*"]
       }, function(result) {
