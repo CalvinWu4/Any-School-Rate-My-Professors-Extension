@@ -23,19 +23,20 @@ function requestHostPermission(tab){
             }
             else {
                 if(chrome.runtime.lastError) console.error(chrome.runtime.lastError);
-                throw Error("Permission denied for host ");
+                throw Error("Permission denied for host");
             }
     });
 }
 
 let savedRecords = JSON.parse(localStorage.getItem("records"));
+let savedNicknames = JSON.parse(localStorage.getItem("nicknames"));
 let urls;
 if (savedRecords) {
     urls = savedRecords.map(record => record.fields.URL);
 }
 
 // Sync saved data with airtable data
-async function getData() {
+async function getAirtableRecords() {
     await fetch('https://airtable.calvinwu4.workers.dev/')
         .then(response => response.json())
         .then(data => { 
@@ -84,11 +85,28 @@ const showPageActionRule = {
     actions: [ new chrome.declarativeContent.ShowPageAction() ]
 };
 
-  
+// Save nicknames to localstorage
+function getNicknames(){
+    fetch('https://raw.githubusercontent.com/carltonnorthern/nickname-and-diminutive-names-lookup/master/names.csv')
+    .then(response => response.text())
+    .then(text => {
+        text = text.trim();
+        const parsed = Papa.parse(text).data
+        var nicknames = {};
+        for (var i = 0; i < parsed.length; i++)
+        {
+            nicknames[parsed[i][0]] = parsed[i].slice(1);
+        }
+
+        localStorage.setItem("nicknames", JSON.stringify(nicknames));
+    })
+}
+
 chrome.runtime.onInstalled.addListener(function(details) {
+    getNicknames();
     // Get data on first install
     if(details.reason == "install"){
-        getData().then(function(){
+        getAirtableRecords().then(function(){
             getConditions();
         });
     }
@@ -112,13 +130,7 @@ function injectCode(tabId) {
         file: "jquery-3.3.1.min.js"
     });
     chrome.tabs.executeScript({
-        file: "node_modules/papaparse/papaparse.min.js"
-    });
-    chrome.tabs.executeScript({
         file: "node_modules/compromise/builds/compromise.js"
-    });
-    chrome.tabs.executeScript({
-        file: "names.js"
     });
     chrome.tabs.executeScript({
         file: "arrive.min.js"
@@ -127,15 +139,19 @@ function injectCode(tabId) {
         file: "tooltipster/dist/js/tooltipster.bundle.min.js"
     });
     chrome.tabs.executeScript({
+        file: "utils.js"
+    });
+    chrome.tabs.executeScript({
         file: "contentscript.js"
     }, function() {
-        chrome.tabs.sendMessage(tabId, {records: savedRecords}); // Send records to content script
+        chrome.tabs.sendMessage(tabId, {records: savedRecords, nicknames: savedNicknames}); // Send records to content script
     });
 }
 
 chrome.pageAction.onClicked.addListener(function(tab) {
+    getNicknames();
     // If URL is saved, prompt host permission to allow for injection of code
-    getData().then(function(){
+    getAirtableRecords().then(function(){
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
             chrome.declarativeContent.onPageChanged.addRules([showIconRule, showPageActionRule]);
         });    

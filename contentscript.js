@@ -1,4 +1,5 @@
 let savedRecords = JSON.parse(localStorage.getItem("records"));
+let savedNicknames = JSON.parse(localStorage.getItem("nicknames"));
 
 let waitForFetch;
 
@@ -11,13 +12,18 @@ else{
     waitForFetch = true;
 }
 
-// Refresh records from background fetch
+// Refresh nicknames and Airtable records from background fetch
 chrome.runtime.onMessage.addListener(function(message) {
-    const records = message.records;
-    savedRecords = records.filter(record => 
+    const fetchedNicknames = message.nicknames;
+    // Only include records relevant to this URL
+    const fetchedRecords = message.records.filter(record => 
         new URL(record.fields.URL).hostname === window.location.hostname);
-    localStorage.setItem("records", JSON.stringify(savedRecords));
+        
+    localStorage.setItem("records", JSON.stringify(fetchedRecords));
+    localStorage.setItem("nicknames", JSON.stringify(fetchedNicknames));
+    
     savedRecords = JSON.parse(localStorage.getItem("records"));
+    savedNicknames = JSON.parse(localStorage.getItem("nicknames"));
     if (waitForFetch) {
         waitForFetch = false;
         AddRatings();
@@ -138,8 +144,6 @@ function AddRatings() {
     })
 }
 
-const nicknames = getNicknames();
-
 function GetProfessorRating(url, element, fullName, lastName, originalLastName, firstName, originalFirstName, middleNames, originalMiddleNames, 
     runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating = false) {
     chrome.runtime.sendMessage({ url: url }, function (response) {
@@ -229,9 +233,9 @@ function GetProfessorRating(url, element, fullName, lastName, originalLastName, 
                 }
             }
             // Try again with nicknames for the first name
-            else if (runAgain && nicknames[originalFirstName]) {
-                firstName = nicknames[originalFirstName][index];
-                runAgain = nicknames[originalFirstName][index+1];
+            else if (runAgain && savedNicknames[originalFirstName]) {
+                firstName = savedNicknames[originalFirstName][index];
+                runAgain = savedNicknames[originalFirstName][index+1];
                 url = `${urlBase}${firstName}+${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`
                 index++;
                 GetProfessorRating(url, newElem, fullName, lastName, originalLastName, firstName, originalFirstName, 
