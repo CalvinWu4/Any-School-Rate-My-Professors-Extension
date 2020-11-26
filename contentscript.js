@@ -63,12 +63,8 @@ function AddRatings() {
             verbs: false,  
             honorifics: true}).out();
         if (fullName && fullName !== 'staff' && fullName !== 'tba') {
-            // Handle names written as "lastName, firstName"
-            if (fullName.includes(',')) {
-                const commaSplitName = fullName.split(',');
-                fullName = `${commaSplitName[1]} ${commaSplitName[0]}`;
-                fullName = fullName.trim();
-            }
+            // Convert "last name, first name" to "first name last name"
+            fullName = normalizeNameOrder(fullName);
             const splitName = fullName.split(' ');
             const firstName = splitName[0];
             const lastName = splitName.slice(-1)[0];
