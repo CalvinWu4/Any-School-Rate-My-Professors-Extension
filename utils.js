@@ -5,7 +5,7 @@ function isInitial(str) {
 
 // Convert "last name, first name" to "first name last name"
 function normalizeNameOrder(fullName) {
-    let normalizedName = new String(fullName);
+    let normalizedName = JSON.parse(JSON.stringify(fullName));
 
     if (fullName.includes(',')) {
         const commaSplitName = fullName.split(',');
