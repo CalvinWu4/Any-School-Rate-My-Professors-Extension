@@ -144,7 +144,6 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
         if (doc) {
             const profID = doc.pk_id;
             const realFullName = doc.teacherfullname_s;
-            const realFirstName = doc.teacherfirstname_t;
             const dept = doc.teacherdepartment_s;
             const profRating = doc.averageratingscore_rf && doc.averageratingscore_rf.toFixed(1);
             const numRatings = doc.total_number_of_ratings_i;
