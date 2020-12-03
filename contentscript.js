@@ -14,16 +14,15 @@ else{
 
 // Refresh nicknames and Airtable records from background fetch
 chrome.runtime.onMessage.addListener(function(message) {
-    const fetchedNicknames = message.nicknames;
     // Only include records relevant to this URL
     const fetchedRecords = message.records.filter(record => 
         new URL(record.fields.URL).hostname === window.location.hostname);
-        
+    const fetchedNicknames = message.nicknames;
+
     localStorage.setItem("records", JSON.stringify(fetchedRecords));
     localStorage.setItem("nicknames", JSON.stringify(fetchedNicknames));
-    
-    savedRecords = JSON.parse(localStorage.getItem("records"));
-    savedNicknames = JSON.parse(localStorage.getItem("nicknames"));
+    savedRecords = fetchedRecords;
+    savedNicknames = fetchedNicknames;
     if (waitForFetch) {
         waitForFetch = false;
         AddRatingsOnArrive();

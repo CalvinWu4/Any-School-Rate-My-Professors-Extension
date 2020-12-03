@@ -30,13 +30,13 @@ function requestHostPermission(tab){
 
 let savedRecords = JSON.parse(localStorage.getItem("records"));
 let savedNicknames = JSON.parse(localStorage.getItem("nicknames"));
-let urls;
+let savedUrls;
 if (savedRecords) {
-    urls = savedRecords.map(record => record.fields.URL);
+    savedUrls = savedRecords.map(record => record.fields.URL);
 }
 
 // Sync saved data with airtable data
-async function getAirtableRecords() {
+async function getAirtableRecords(tabUrl) {
     await fetch('https://airtable.calvinwu4.workers.dev/')
         .then(response => response.json())
         .then(data => { 
@@ -45,14 +45,16 @@ async function getAirtableRecords() {
                 record.fields.ID &&
                 new URL(record.fields.URL)  && 
                 record.fields.Selector);
-            if (JSON.stringify(savedRecords) != JSON.stringify(records)) {
                 savedRecords = records;
                 localStorage.setItem("records", JSON.stringify(records));
-                // Refresh URLs
-                urls = savedRecords.map(record => record.fields.URL);
-                chrome.runtime.reload();
-            }
-        });
+                const urls = records.map(record => record.fields.URL);
+                // Need to reload extension to change icon
+                // Reload extension on install and if current url got added/removed from Airtable
+                if (urls.some(url => url === tabUrl) !==  savedUrls.some(url => url === tabUrl) || tabUrl === null) {
+                    savedUrls = urls;
+                    chrome.runtime.reload();
+                }
+            });
 }
 
 // Conditions of which to light up icon
@@ -60,7 +62,7 @@ let conditions = [];
 
 function getConditions(){
     conditions = [];
-    urls && urls.forEach(url => {
+    savedUrls && savedUrls.forEach(url => {
         conditions.push(
             new chrome.declarativeContent.PageStateMatcher({
                 pageUrl: { hostEquals: new URL(url).hostname }
@@ -107,7 +109,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     getNicknames();
     // Get data on first install
     if(details.reason == "install"){
-        getAirtableRecords().then(function(){
+        getAirtableRecords(null).then(function(){
             getConditions();
         });
     }
@@ -151,11 +153,11 @@ function injectCode(tabId) {
 
 chrome.pageAction.onClicked.addListener(function(tab) {
     // If URL is saved, prompt host permission to allow for injection of code
-    getAirtableRecords().then(function(){
+    getAirtableRecords(tab.url).then(function(){
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
             chrome.declarativeContent.onPageChanged.addRules([showIconRule, showPageActionRule]);
         });    
-        if (urls && urls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
+        if (savedUrls && savedUrls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
             requestHostPermission(tab);
         }
     });
