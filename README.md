@@ -20,7 +20,6 @@ To better find professors, this extension will try the first part of a hyphenate
 - Changes from the Airtable will be reflected whenever you click on the extension icon.
 
 ### Todo
-- Support search given only a last name
 - Support iframes
 - Handle multiple professor names in one element
 - Search multiple colleges in URL
