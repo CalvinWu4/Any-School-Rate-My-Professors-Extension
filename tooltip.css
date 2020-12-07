@@ -1,10 +1,7 @@
-.tooltipster-default {
+.tooltipster-box {
 	border-radius: 25px; 
 	border: 2px solid rgb(190, 190, 190);
     padding: 5px;
 	background: rgb(238, 238, 238);
-}
-
-.paragraph {
-	max-width: 30em;
+	color: #333;
 }
