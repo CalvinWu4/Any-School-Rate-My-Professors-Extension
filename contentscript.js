@@ -120,9 +120,9 @@ function AddRatingsOnArrive() {
 }
 
 function GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
-    middleNames, originalMiddleNames, 
-    runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating = false) {
+    middleNames, originalMiddleNames, runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, linkifyRating = false) {
     url = `${urlBase}${firstName ? firstName + '+' : ''}${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`;
+   
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const json = response.JSONresponse;
         const numFound = json.response.numFound;
@@ -151,22 +151,19 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
                 }
             }
         }
-        
+
+        element.textContent = element.textContent.trim() + ' ';
         const newElem = document.createElement('a');
         // Append new anchor element
-        newElem.classList.add('prof-rating');
-        if (!linkifyRating) {
-            newElem.textContent = element.textContent + ' ';
-            element.textContent = '';
+        if (linkifyRating && (!element.classList.contains('prof-rating'))) {
+            element.insertAdjacentElement('afterend', newElem);
+            element = newElem;
         }
-        else {
-            element.textContent += ' ';
-        }
-        newElem.setAttribute('target', '_blank');
-        newElem.addEventListener('click', function (e) {
+        element.classList.add('prof-rating');
+        element.setAttribute('target', '_blank');
+        element.addEventListener('click', function (e) {
 			e.stopPropagation();
 		});
-        element.appendChild(newElem);
         
         // Add professor data if found
         if (doc) {
@@ -179,21 +176,21 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
             const profURL = "http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + profID;
             const allprofRatingsURL = "https://www.ratemyprofessors.com/paginate/professors/ratings?tid=" + profID + "&page=0&max=20";
 
-            newElem.textContent += `(${profRating ? profRating : 'N/A'})`;
-            newElem.setAttribute('href', profURL);
-            AddTooltip(newElem, allprofRatingsURL, realFullName, profRating, numRatings, easyRating, dept);
+            element.textContent += `(${profRating ? profRating : 'N/A'})`;
+            element.setAttribute('href', profURL);
+            AddTooltip(element, allprofRatingsURL, realFullName, profRating, numRatings, easyRating, dept);
         } else {
             // If the first name is simply an initial, search w/o it
             if (firstInitial && firstName !== '') {
                 firstName = '';
-                GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                     onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                     middleNamesString, urlBase, linkifyRating);
             }
             // Try again with only the maiden name of a hyphenated last name
             else if (lastName.includes("-")) {
                 lastName = lastName.split('-')[0];
-                GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                     onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                     middleNamesString, urlBase, linkifyRating);
             }            
@@ -206,7 +203,7 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
                         middleNamesRemovalStep = 1;
                         middleNames = [...originalMiddleNames]; // Restore for next step
                     }
-                    GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                    GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                         onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                         middleNamesString, urlBase, linkifyRating);
                     }
@@ -217,7 +214,7 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
                         middleNamesRemovalStep = 2;
                         middleNames = [...originalMiddleNames]; // Restore for next step
                     }
-                    GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                    GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                         onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                         middleNamesString, urlBase, linkifyRating);
                     }
@@ -234,7 +231,7 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
                     else {
                         middleNames.shift(); // Try every combo of left-most middle name removed
                     }
-                    GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                    GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                         onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                         middleNamesString, urlBase, linkifyRating);
                     }
@@ -244,7 +241,7 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
                 firstName = savedNicknames[originalFirstName][index];
                 runAgain = savedNicknames[originalFirstName][index+1];
                 index++;
-                GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                     onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                     middleNamesString, urlBase, linkifyRating);
             }
@@ -253,22 +250,22 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
                 firstName = originalMiddleNames[0];
                 runAgain = true;
                 middleNameAsFirst = true;
-                GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                     onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                     middleNamesString, urlBase, linkifyRating);
             }
             // Try again with middle names
             else if (middleNamesString === '' && originalMiddleNames.length > 0){
                 middleNamesString = middleNames.join('+');
-                GetProfessorRating(newElem, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                     onlyLastName, middleNames, originalMiddleNames,runAgain, index, middleNamesRemovalStep, middleNameAsFirst, 
                     middleNamesString, urlBase, linkifyRating);
             }
             // Set link to search results if not found
             else {
-                newElem.textContent += "(NF)";
+                element.textContent += "(NF)";
                 const origMiddleNamesString = originalMiddleNames.join('+');
-                newElem.setAttribute('href', 
+                element.setAttribute('href', 
                 `https://www.ratemyprofessors.com/search.jsp?query=${originalFirstName ? originalFirstName + '+' : ''}${originalMiddleNames.length > 0 ? origMiddleNamesString + '+': ''}${originalLastName}`);
             }
         }        
