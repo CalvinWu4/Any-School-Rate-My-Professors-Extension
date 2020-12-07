@@ -21,7 +21,7 @@ To better find professors, this extension will try the first part of a hyphenate
 
 ### Todo
 - Handle multiple professor names in one element
-- Search multiple colleges in URL
+- Search multiple colleges for a single URL
 - Support iframes (e.g. Peoplesoft)
 
 ### Screenshots
