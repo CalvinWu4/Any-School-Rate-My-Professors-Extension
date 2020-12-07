@@ -152,18 +152,28 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
             }
         }
 
-        element.textContent = element.textContent.trim() + ' ';
-        const newElem = document.createElement('a');
-        // Append new anchor element
-        if (linkifyRating && (!element.classList.contains('prof-rating'))) {
-            element.insertAdjacentElement('afterend', newElem);
+        if (!element.classList.contains('prof-rating')) {
+            const newElem = document.createElement('a');
+            
+            // Linkify professor name and rating
+            if (!linkifyRating) {
+                // Append a link with the same text as element and clear text of original element
+                newElem.textContent = element.textContent.trim() + ' ';
+                element.textContent = '';
+                element.appendChild(newElem);
+            }
+            // Only linkify professor rating
+            else {
+                element.textContent = element.textContent.trim() + ' ';
+                element.insertAdjacentElement('afterend', newElem);
+            }
             element = newElem;
+            element.classList.add('prof-rating');
+            element.setAttribute('target', '_blank');
+            element.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
         }
-        element.classList.add('prof-rating');
-        element.setAttribute('target', '_blank');
-        element.addEventListener('click', function (e) {
-			e.stopPropagation();
-		});
         
         // Add professor data if found
         if (doc) {
