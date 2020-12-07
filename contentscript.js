@@ -60,7 +60,7 @@ function AddRatingsOnArrive() {
             plurals: false,
             verbs: false,  
             honorifics: true}).out();
-        if (fullName && fullName !== 'staff' && fullName !== 'tba') {
+        if (fullName && fullName.replace('instructor: ', '') !== 'staff' && fullName.replace('instructor: ', '') !== 'tba') {
             // Convert "last name, first name" to "first name last name"
             fullName = normalizeNameOrder(fullName);
             const splitName = fullName.split(' ');
@@ -106,10 +106,12 @@ function AddRatingsOnArrive() {
     // For professor names that are loaded when the page is loaded
     [...document.querySelectorAll(selectors.join())]
         .forEach(element => AddRatings(element));
-    selectors.forEach(selector => {
     // For professor names that take time to load
+    selectors.forEach(selector => {
         document.arrive(selector, function(){
-            AddRatings(this);
+            if (selector !== psMobileSelector || (selector === psMobileSelector && this.textContent.includes('Instructor: '))) {
+                AddRatings(this);
+            }
         });
     });
 }
