@@ -156,11 +156,11 @@ chrome.pageAction.onClicked.addListener(function(tab) {
     getAirtableRecords(tab.url).then(function(){
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
             chrome.declarativeContent.onPageChanged.addRules([showIconRule, showPageActionRule]);
-        });    
-        if (savedUrls && savedUrls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
-            requestHostPermission(tab);
-        }
+        });
     });
+    if (savedUrls && savedUrls.some(url => new URL(url).hostname === new URL(tab.url).hostname)) {
+        requestHostPermission(tab);
+    }
 });
 
 // Inject code to page if host permission is granted
