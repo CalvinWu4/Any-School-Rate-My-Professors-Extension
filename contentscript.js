@@ -60,6 +60,9 @@ function AddRatingsOnArrive() {
             plurals: false,
             verbs: false,  
             honorifics: true}).out();
+        const parenthesesRegex = /\s*\(.*?\)\s*/g;
+        fullName = fullName.replace(parenthesesRegex, '');
+
         if (fullName && fullName.replace('instructor: ', '') !== 'staff' && fullName.replace('instructor: ', '') !== 'tba') {
             // Convert "last name, first name" to "first name last name"
             fullName = normalizeNameOrder(fullName);
