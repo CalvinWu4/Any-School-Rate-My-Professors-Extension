@@ -394,7 +394,6 @@ function AddTooltip(element, allprofRatingsURL, realFullName, profRating, numRat
                     }
                     const commentText = document.createElement("p");
                     commentText.textContent = mostHelpfulReview.rComments;
-                    commentText.classList.add('paragraph');
                     div.appendChild(commentText);
                     const tagsText = document.createElement("p");
                     tagsText.textContent = "Tags: "
@@ -421,7 +420,8 @@ function AddTooltip(element, allprofRatingsURL, realFullName, profRating, numRat
                                 side: 'right',
                                 content: div,
                                 contentAsHTML: true,
-                                maxWidth: 400
+                                maxWidth: 400,
+                                interactive: true
                             })
                             .tooltipster('show');
                     }
