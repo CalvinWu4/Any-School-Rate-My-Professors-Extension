@@ -173,6 +173,10 @@ function GetProfessorRating(element, fullName, lastName, originalLastName, first
             element.addEventListener('click', function (e) {
                 e.stopPropagation();
             });
+            const lightColorLink = savedRecords[0].fields["Light Color Link"];
+            if (lightColorLink) {
+                element.classList.add('light-blue');
+            }
         }
         
         // Add professor data if found
