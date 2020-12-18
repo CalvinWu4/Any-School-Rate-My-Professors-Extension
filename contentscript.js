@@ -47,10 +47,16 @@ function AddRatingsOnArrive() {
     function AddRatings(element) {
         let fullName = element.textContent;
         if (selectors[0] === psMobileSelector && fullName.includes(',')) {
-            for (let singleName of fullName.replace('Instructor: ', '').split(', ')) {
+            const multiNames = fullName.replace('Instructor: ', '').split(', ');
+            for (const [index, singleName] of multiNames.entries()) {
                 const clone = element.cloneNode(true);
                 clone.textContent = `Instructor: ${singleName}`;
                 element.textContent = element.textContent.replace(`${singleName}, `, '');
+                element.insertAdjacentElement('beforebegin', clone);
+                // Delete original element after done iterating
+                if (index === multiNames.length - 1) {
+                    element.remove();
+                }
                 AddRatings(clone);
             }
         }
@@ -130,7 +136,7 @@ const linkifyRating = savedRecords[0].fields["Only Add Link To Rating"];
 const lightColorLink = savedRecords[0].fields["Light Color Link"];
 
 function GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
-    middleNames, originalMiddleNames, runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, multiNames=false) {
+    middleNames, originalMiddleNames, runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase) {
     url = `${urlBase}${firstName ? firstName + '+' : ''}${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`;
    
     chrome.runtime.sendMessage({ url: url }, function (response) {
