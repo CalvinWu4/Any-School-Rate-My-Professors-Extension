@@ -21,7 +21,7 @@ To better find professors, this extension will try the first part of a hyphenate
 
 ### Todo
 - Search multiple colleges for a single URL
-- Support iframes (e.g. Peoplesoft)
+- Support iframes (e.g. Peoplesoft) (blocked until [this](https://github.com/kylekyle/monitoring/issues/3) gets resolved)
 
 ### Screenshots
 ![Screenshot](images/screenshot.png)
