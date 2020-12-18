@@ -15,7 +15,7 @@ To better find professors, this extension will try the first part of a hyphenate
 - If not, the edit link to the Airtable is [here](https://airtable.com/invite/l?inviteId=inv3Tecc8DWRnj58K&inviteToken=4f05cad586fc2b0ef1f9e95a814ce1be2ceacd835b93aac5c23b8ff9532566bc). Note: You must create an Airtable account if you don't have one to edit.
 - Fill in the required fields to add your college's class search website. Read the field descriptions to help you.
 - Go to the URL of the college class search website you just added.
-- If the extension icon is not lit up, click on it to refresh the supported URL's. (Give Airtable a bit to update changes on its end.) Click on the lit up icon and give the extension permissions to the website.
+- If the extension icon is grayed-out, click on it to refresh the supported URL's. (Give Airtable a bit to update changes on its end.) Click on the colored-in icon and give the extension permissions to the website.
 - The page will refresh and professors ratings will be shown on the page.
 - Changes from the Airtable will be reflected whenever you click on the extension icon.
 
