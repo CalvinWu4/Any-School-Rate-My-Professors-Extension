@@ -44,8 +44,17 @@ function AddRatingsOnArrive() {
             return selector;
         });
 
-    const AddRatings = function(element) {
+    function AddRatings(element) {
         let fullName = element.textContent;
+        if (selectors[0] === psMobileSelector && fullName.includes(',')) {
+            for (let singleName of fullName.replace('Instructor: ', '').split(', ')) {
+                const clone = element.cloneNode(true);
+                clone.textContent = `Instructor: ${singleName}`;
+                element.textContent = element.textContent.replace(`${singleName}, `, '');
+                AddRatings(clone);
+            }
+        }
+    
         fullName = nlp(fullName).normalize({
             whitespace: true, 
             case: true, 
@@ -121,7 +130,7 @@ const linkifyRating = savedRecords[0].fields["Only Add Link To Rating"];
 const lightColorLink = savedRecords[0].fields["Light Color Link"];
 
 function GetProfessorRating(element, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
-    middleNames, originalMiddleNames, runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase) {
+    middleNames, originalMiddleNames, runAgain, index, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, multiNames=false) {
     url = `${urlBase}${firstName ? firstName + '+' : ''}${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolid_s%3A${savedRecords[0].fields.ID}`;
    
     chrome.runtime.sendMessage({ url: url }, function (response) {
