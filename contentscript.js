@@ -44,7 +44,7 @@ function AddRatingsOnArrive() {
             return selector;
         });
 
-    const AddRatings = function(element) {
+    function AddRatings(element) {
         let fullName = element.textContent;
         fullName = nlp(fullName).normalize({
             whitespace: true, 
@@ -59,9 +59,10 @@ function AddRatingsOnArrive() {
             verbs: false,  
             honorifics: true}).out();
         const parenthesesRegex = /\s*\(.*?\)\s*/g;
+        fullName = fullName.replace('instructor: ', '');
         fullName = fullName.replace(parenthesesRegex, '');
 
-        if (fullName && fullName.replace('instructor: ', '') !== 'staff' && fullName.replace('instructor: ', '') !== 'tba') {
+        if (fullName !== 'staff' && fullName !== 'tba') {
             // Convert "last name, first name" to "first name last name"
             fullName = normalizeNameOrder(fullName);
             const splitName = fullName.split(' ');
@@ -110,6 +111,22 @@ function AddRatingsOnArrive() {
     // For professor names that take time to load
     selectors.forEach(selector => {
         document.arrive(selector, function(){
+            if (selector === psMobileSelector) {
+                // Break up element with multiple professors into their own elements
+                if (selectors[0] === psMobileSelector && this.textContent.includes(',')) {
+                    const multiNames = this.textContent.replace('Instructor: ', '').split(', ');
+                    for (const [index, singleName] of multiNames.entries()) {
+                        const clone = this.cloneNode(true);
+                        clone.textContent = `Instructor: ${singleName}`;
+                        this.textContent = this.textContent.replace(`${singleName}, `, '');
+                        this.insertAdjacentElement('beforebegin', clone);
+                        // Delete original element after done iterating
+                        if (index === multiNames.length - 1) {
+                            this.remove();
+                        }
+                    }
+                }        
+            }
             if (selector !== psMobileSelector || (selector === psMobileSelector && this.textContent.includes('Instructor: '))) {
                 AddRatings(this);
             }
