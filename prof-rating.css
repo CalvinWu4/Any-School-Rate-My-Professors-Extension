@@ -9,3 +9,7 @@ a.prof-rating:visited {
 a.prof-rating.light-blue {
     color: #58a6ff !important;
 }
+
+a.prof-rating.light-blue:visited {
+    color: #58a6ff !important;
+}
