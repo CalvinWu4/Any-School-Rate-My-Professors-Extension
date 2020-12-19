@@ -15,3 +15,20 @@ function normalizeNameOrder(fullName) {
 
     return normalizedName;
 }
+
+function loadCSS(file, document) {
+    var head = document.head;
+    var link = document.createElement("link");
+  
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = chrome.extension.getURL(file + '.css');
+  
+    head.appendChild(link);
+}
+
+function unloadCSS(file, document) {
+    var cssNode = document.getElementById(file);
+    cssNode && cssNode.parentNode.removeChild(cssNode);
+}
+  

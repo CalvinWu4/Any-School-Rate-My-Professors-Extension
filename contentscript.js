@@ -136,6 +136,10 @@ function AddRatingsOnArrive() {
         // Handle iframes
         document.querySelectorAll('iframe').forEach(iframe => {
             iframe.addEventListener("load", function() {
+                if (iframe.contentDocument) {
+                    loadCSS('prof-rating', iframe.contentDocument);
+                    loadCSS('tooltip', iframe.contentDocument);
+                }
                 new MutationObserver(function(mutations) {
                     for(let mutation of mutations) {
                         for(let node of mutation.addedNodes) {
