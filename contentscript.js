@@ -110,9 +110,10 @@ function AddRatingsOnArrive() {
         .forEach(element => AddRatings(element));
     // For professor names that take time to load
     selectors.forEach(selector => {
+        // Handle non-iframes
         document.arrive(selector, function(){
             if (selector === psMobileSelector) {
-                // Break up element with multiple professors into their own elements
+                // Peoplesoft Mobile: Break up multi-professor elements into separate elements
                 if (selectors[0] === psMobileSelector && this.textContent.includes(',')) {
                     const multiNames = this.textContent.replace('Instructor: ', '').split(', ');
                     for (const [index, singleName] of multiNames.entries()) {
@@ -131,6 +132,28 @@ function AddRatingsOnArrive() {
                 AddRatings(this);
             }
         });
+
+        // Handle iframes
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.addEventListener("load", function() {
+                new MutationObserver(function(mutations) {
+                    for(let mutation of mutations) {
+                        for(let node of mutation.addedNodes) {
+                                if (node instanceof HTMLElement) {
+                                    if (node.querySelector(selector)) {
+                                        // AddRatings(node);
+                                        let elements = node.querySelectorAll(selector);
+                                        elements.forEach(element => {
+                                            AddRatings(element);
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                }).observe(iframe?.contentDocument, {subtree: true, childList: true});
+            })
+        });
+        
     });
 }
 
@@ -438,7 +461,7 @@ function AddTooltip(element, allprofRatingsURL, realFullName, profRating, numRat
                                 content: div,
                                 contentAsHTML: true,
                                 maxWidth: 400,
-                                interactive: true
+                                interactive: false
                             })
                             .tooltipster('show');
                     }
