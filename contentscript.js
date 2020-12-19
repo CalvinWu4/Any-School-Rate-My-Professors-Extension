@@ -62,7 +62,7 @@ function AddRatingsOnArrive() {
         fullName = fullName.replace('instructor: ', '');
         fullName = fullName.replace(parenthesesRegex, '');
 
-        if (fullName !== 'staff' && fullName !== 'tba') {
+        if (fullName && fullName !== 'staff' && fullName !== 'tba') {
             // Convert "last name, first name" to "first name last name"
             fullName = normalizeNameOrder(fullName);
             const splitName = fullName.split(' ');
