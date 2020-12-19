@@ -141,7 +141,6 @@ function AddRatingsOnArrive() {
                         for(let node of mutation.addedNodes) {
                                 if (node instanceof HTMLElement) {
                                     if (node.querySelector(selector)) {
-                                        // AddRatings(node);
                                         let elements = node.querySelectorAll(selector);
                                         elements.forEach(element => {
                                             AddRatings(element);
