@@ -20,7 +20,6 @@ To better find professors, this extension will try the first part of a hyphenate
 - Changes from the Airtable will be reflected whenever you click on the extension icon.
 
 ### Todo
-- Search multiple colleges for a single URL
 - Get tooltip working on PeopleSoft sites
 
 ### Screenshots

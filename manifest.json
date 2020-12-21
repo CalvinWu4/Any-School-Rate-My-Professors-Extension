@@ -1,6 +1,6 @@
 {
 	"name" : "Multi-College Rate My Professors Extension",
-	"version" : "1.0.6",
+	"version" : "1.0.7",
 	"description" : "Shows the Rate My Professors rating of professors while searching classes.",
 	"permissions": ["https://search-production.ratemyprofessors.com/*", 
 		"https://raw.githubusercontent.com/carltonnorthern/nickname-and-diminutive-names-lookup/master/names.csv/", 
