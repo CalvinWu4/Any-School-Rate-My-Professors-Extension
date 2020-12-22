@@ -25,6 +25,9 @@ To better find professors, this extension will try the first part of a hyphenate
 ### Screenshots
 ![Screenshot](images/screenshot.png)
 ![Screenshot](images/screenshot2.png)
-![Screenshot](images/screenshot3.png)
+![Screenshot](images/screenshot4.png)
+![Screenshot](images/screenshot5.png)
+![Screenshot](images/screenshot7.png)
+![Screenshot](images/screenshot8.png)
 
 [link-chrome]: https://chrome.google.com/webstore/detail/multi-college-rate-my-pro/kkppfcnjkdgeocghmebigakljcpiamge?hl=en&authuser=0 "Version published on Chrome Web Store"
