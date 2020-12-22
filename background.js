@@ -44,7 +44,7 @@ async function getAirtableRecords(tabUrl) {
                 record.fields.College &&
                 record.fields.ID &&
                 new URL(record.fields.URL)  && 
-                record.fields.Selector);
+                record.fields.Selectors);
                 savedRecords = records;
                 localStorage.setItem("records", JSON.stringify(records));
                 const urls = records.map(record => record.fields.URL);

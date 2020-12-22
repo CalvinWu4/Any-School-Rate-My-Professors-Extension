@@ -35,7 +35,7 @@ function AddRatingsOnArrive() {
     const psMobileSelector = '#search-results .section-content .section-body'; // Handle PeopleSoft Mobile
     for (const [recordIndex, record] of savedRecords.entries()) {
         // Split CSS selectors by new line
-        const selectors = record.fields.Selector.split(/\r?\n/)
+        const selectors = record.fields.Selectors.split(/\r?\n/)
             .filter(selector => selector != "")
             .map(function(selector) {
                 selector = selector.trim();
