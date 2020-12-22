@@ -20,7 +20,7 @@ To better find professors, this extension will try the first part of a hyphenate
 - Changes from the Airtable will be reflected whenever you click on the extension icon.
 
 ### Todo
-- Get tooltip working on PeopleSoft sites
+- Get tooltip working on classic PeopleSoft sites
 
 ### Screenshots
 ![Screenshot](images/screenshot.png)
