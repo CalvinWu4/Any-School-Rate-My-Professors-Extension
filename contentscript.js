@@ -5,7 +5,7 @@ let waitForFetch;
 
 // Add ratings if there are already records saved
 if (savedRecords && savedRecords.length > 0) {
-    AddRatingsOnArrive();
+    AddRatingsFromAirtable();
 }
 // Wait for records to be fetched before adding ratings
 else{
@@ -25,12 +25,12 @@ chrome.runtime.onMessage.addListener(function(message) {
     savedNicknames = fetchedNicknames;
     if (waitForFetch) {
         waitForFetch = false;
-        AddRatingsOnArrive();
+        AddRatingsFromAirtable();
     }
 });
 
-// Add professor ratings
-function AddRatingsOnArrive() {
+// Add professor ratings god function
+function AddRatingsFromAirtable() {
     const urlBase = "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
     const psMobileSelector = '#search-results .section-content .section-body'; // Handle PeopleSoft Mobile
     for (const [recordIndex, record] of savedRecords.entries()) {
@@ -45,7 +45,8 @@ function AddRatingsOnArrive() {
                 return selector;
             });
 
-        function AddRatings(element) {
+        // Add rating to a single element
+        function AddRating(element) {
             let fullName = element.textContent;
             fullName = nlp(fullName).normalize({
                 whitespace: true, 
@@ -108,7 +109,7 @@ function AddRatingsOnArrive() {
 
         // For professor names that are loaded when the page is loaded
         [...document.querySelectorAll(selectors.join())]
-            .forEach(element => AddRatings(element));
+            .forEach(element => AddRating(element));
         // For professor names that take time to load
         selectors.forEach(selector => {
             // Handle non-iframes
@@ -130,7 +131,7 @@ function AddRatingsOnArrive() {
                     }        
                 }
                 if (selector !== psMobileSelector || (selector === psMobileSelector && this.textContent.includes('Instructor: '))) {
-                    AddRatings(this);
+                    AddRating(this);
                 }
             });
 
@@ -148,7 +149,7 @@ function AddRatingsOnArrive() {
                                         if (node.querySelector(selector)) {
                                             let elements = node.querySelectorAll(selector);
                                             elements.forEach(element => {
-                                                AddRatings(element);
+                                                AddRating(element);
                                             });
                                         }
                                     }
