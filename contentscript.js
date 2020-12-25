@@ -128,7 +128,7 @@ function AddRatingsFromAirtable() {
                                 this.remove();
                             }
                         }
-                    }        
+                    }
                 }
                 if (selector !== psMobileSelector || (selector === psMobileSelector && this.textContent.includes('Instructor: '))) {
                     AddRating(this);
@@ -141,6 +141,10 @@ function AddRatingsFromAirtable() {
                     if (iframe.contentDocument) {
                         loadCSS('prof-rating', iframe.contentDocument);
                         loadCSS('tooltip', iframe.contentDocument);
+                        const elements = iframe.contentDocument.querySelectorAll(selector);
+                        elements.forEach(element => {
+                            AddRating(element);
+                        });        
                     }
                     new MutationObserver(function(mutations) {
                         for(let mutation of mutations) {
