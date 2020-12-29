@@ -166,9 +166,9 @@ chrome.pageAction.onClicked.addListener(function(tab) {
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
     const thirtydays = 2592000000; // ms in 30 days
-    const retrievalDate = JSON.parse(localStorage["nicknames-retrieval-date"]);
     // Refresh saved nicknames every month
-    if (new Date().getTime() - new Date(retrievalDate).getTime() >= thirtydays) {
+    if (!localStorage["nicknames-retrieval-date"] || 
+    new Date().getTime() - new Date(JSON.parse(localStorage["nicknames-retrieval-date"])).getTime() >= thirtydays) {
         getNicknames();
     }
 
