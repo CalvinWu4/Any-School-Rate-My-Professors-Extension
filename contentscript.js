@@ -136,31 +136,35 @@ function AddRatingsFromAirtable() {
             });
 
             // Handle iframes
-            document.querySelectorAll('iframe').forEach(iframe => {
-                iframe.addEventListener("load", function() {
-                    if (iframe.contentDocument) {
-                        loadCSS('prof-rating', iframe.contentDocument);
-                        loadCSS('tooltip', iframe.contentDocument);
-                        const elements = iframe.contentDocument.querySelectorAll(selector);
-                        elements.forEach(element => {
-                            AddRating(element);
-                        });        
-                    }
-                    new MutationObserver(function(mutations) {
-                        for(let mutation of mutations) {
-                            for(let node of mutation.addedNodes) {
-                                    if (node instanceof HTMLElement) {
-                                        if (node.querySelector(selector)) {
-                                            let elements = node.querySelectorAll(selector);
-                                            elements.forEach(element => {
-                                                AddRating(element);
-                                            });
-                                        }
+            function AddRatingsToIframe(iframe){
+                if (iframe.contentDocument) {
+                    loadCSS('prof-rating', iframe.contentDocument);
+                    loadCSS('tooltip', iframe.contentDocument);
+                    const elements = iframe.contentDocument.querySelectorAll(selector);
+                    elements.forEach(element => {
+                        AddRating(element);
+                    });        
+                }
+                new MutationObserver(function(mutations) {
+                    for(let mutation of mutations) {
+                        for(let node of mutation.addedNodes) {
+                                if (node instanceof HTMLElement) {
+                                    if (node.querySelector(selector)) {
+                                        let elements = node.querySelectorAll(selector);
+                                        elements.forEach(element => {
+                                            AddRating(element);
+                                        });
                                     }
                                 }
                             }
-                    }).observe(iframe?.contentDocument, {subtree: true, childList: true});
-                })
+                        }
+                }).observe(iframe?.contentDocument, {subtree: true, childList: true});
+            }
+            document.querySelectorAll('iframe').forEach(iframe => {
+                iframe.addEventListener("load", function() {
+                    AddRatingsToIframe(iframe);
+                });
+                AddRatingsToIframe(iframe);
             });
         });
     }
