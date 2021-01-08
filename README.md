@@ -1,4 +1,4 @@
-# Multi-College-Rate-My-Professor-Extension
+# Any School Rate My Professor Extension
 
 [**Chrome** extension][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/kkppfcnjkdgeocghmebigakljcpiamge.svg?label=%20">][link-chrome]
 
