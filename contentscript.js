@@ -174,10 +174,10 @@ function AddRatingsFromAirtable() {
 
 function GetProfessorRating(element, record, isLastRecord, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
     middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase) {
-    const schoolId = record.fields.ID;
+    const schoolName = record.fields.College.replace(' - ', ' '); // Replace dashes because they spoil the search
     const linkifyRating = record.fields["Only Add Link To Rating"];
     const lightColorLink = record.fields["Light Color Link"];
-    url = `${urlBase}${firstName ? firstName + '+' : ''}${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolid_s%3A${schoolId}`;
+    url = `${urlBase}${firstName ? firstName + '+' : ''}${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolname_t:${schoolName}`;
 
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const json = response.JSONresponse;

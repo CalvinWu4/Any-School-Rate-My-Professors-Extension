@@ -42,7 +42,6 @@ async function getAirtableRecords(tabUrl) {
         .then(data => { 
             records = data.records.filter(record => 
                 record.fields.College &&
-                record.fields.ID &&
                 new URL(record.fields.URL)  && 
                 record.fields.Selectors);
                 savedRecords = records;
