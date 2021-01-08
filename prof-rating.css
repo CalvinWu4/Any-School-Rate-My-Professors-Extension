@@ -2,14 +2,6 @@ a.prof-rating {
     color: #0000EE !important;
 }
 
-a.prof-rating:visited {
-    color: #0000EE !important;
-}
-
 a.prof-rating.light-blue {
-    color: #58a6ff !important;
-}
-
-a.prof-rating.light-blue:visited {
     color: #58a6ff !important;
 }
