@@ -1,8 +1,8 @@
-# Any School Rate My Professor Extension
+# Any School Rate My Professors Extension
 
 [**Chrome** extension][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/kkppfcnjkdgeocghmebigakljcpiamge.svg?label=%20">][link-chrome]
 
-This extension shows the [Rate My Professors](https://www.ratemyprofessors.com/) rating of professors while searching classes on websites provided in a community-edited Airtable. 
+This extension shows the [Rate My Professors](https://www.ratemyprofessors.com/) ratings of professors while searching for classes on websites from a crowdsourced [Airtable](https://airtable.com/shrLerMYO0zwwLasr).
 
 ### Description
 Professors' names will now link to their Rate My Professors page (or the search results if not found). The most helpful rating is chosen as the most recent rating with the most net upvotes (regardless of the quality given). (The most helpful rating on Rate My Professors always has an "Awesome" overall quality.) Also, the "Would take again" value won't show up unless there are eight or more ratings and the majority of ratings answer that question. 
