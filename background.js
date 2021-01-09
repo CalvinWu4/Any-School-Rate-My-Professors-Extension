@@ -162,8 +162,14 @@ chrome.pageAction.onClicked.addListener(function(tab) {
     }
 });
 
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+    chrome.pageAction.show(activeInfo.tabId); // Always show pageaction
+});
+
 // Inject code to page if host permission is granted
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
+    chrome.pageAction.show(tabId); // Always show pageaction
+
     const thirtydays = 2592000000; // ms in 30 days
     // Refresh saved nicknames every month
     if (!localStorage["nicknames-retrieval-date"] || 
