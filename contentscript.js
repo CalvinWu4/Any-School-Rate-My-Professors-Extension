@@ -170,14 +170,25 @@ function AddRatingsFromAirtable() {
     }
 }
 
-
-
 function GetProfessorRating(element, record, isLastRecord, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
     middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase) {
-    const schoolName = record.fields.College.replace(' - ', ' '); // Replace dashes because they spoil the search
+    let schoolName = record.fields.College;
+    // If there are multiple colleges that use the same URL, use the common substring of the college names as the schoolSiteSearchName
+    let commonSchoolName;
+    const collegesWithSameUrl = savedRecords
+        .filter(x => x.fields.URL === record.fields.URL)
+        .map(x => x.fields.College);
+    if (collegesWithSameUrl.length > 1){
+        commonSchoolName = commonSubsequence(collegesWithSameUrl);
+    }
+    const schoolApiSearchName = schoolName.replace(' - ', ' ');
+    const schoolSiteSearchName = (commonSchoolName ? commonSchoolName : schoolName)
+        .toLowerCase().replace('(', '').replace(')', '');
     const linkifyRating = record.fields["Only Add Link To Rating"];
     const lightColorLink = record.fields["Light Color Link"];
-    url = `${urlBase}${firstName ? firstName + '+' : ''}${(middleNamesString === '' ? '' : middleNamesString + "+")}${lastName}+AND+schoolname_t:${schoolName}`;
+    url = `${urlBase}${firstName ? firstName + '+' : ''}${
+        (middleNamesString === '' ? '' : middleNamesString + "+")}${
+        lastName}+AND+schoolname_t:${schoolApiSearchName}`;
 
     chrome.runtime.sendMessage({ url: url }, function (response) {
         const json = response.JSONresponse;
@@ -341,7 +352,9 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                     element.textContent = `${element.textContent} (NF)`;
                     const origMiddleNamesString = originalMiddleNames.join('+');
                     element.setAttribute('href', 
-                    `https://www.ratemyprofessors.com/search.jsp?query=${originalFirstName ? originalFirstName + '+' : ''}${originalMiddleNames.length > 0 ? origMiddleNamesString + '+': ''}${originalLastName}`);
+                    `https://www.ratemyprofessors.com/search.jsp?queryBy=teacherName&queryoption=HEADER&query=${
+                    originalFirstName ? originalFirstName + '+' : ''}${originalMiddleNames.length > 0 ? 
+                    origMiddleNamesString + '+': ''}${originalLastName}&facetSearch=true&schoolName=${schoolSiteSearchName}`);
                 }
             }
         }        
