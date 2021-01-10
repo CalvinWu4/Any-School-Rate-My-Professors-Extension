@@ -172,7 +172,7 @@ function AddRatingsFromAirtable() {
 }
 
 function GetProfessorRating(element, record, isLastRecord, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
-    middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase) {
+    middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase, combineFirstAndMiddleName=false) {
     let schoolName = record.fields.College.toLowerCase();
     // If there are multiple colleges that use the same site, use the common substring of the college names as the schoolSiteSearchName
     let commonSchoolName;
@@ -338,6 +338,14 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName, originalFirstName, firstInitial, 
                     onlyLastName, middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, 
                     middleNamesString, urlBase);
+            }
+            // Try again with first name appended to middle name (e.g. Mary Beth => MaryBeth)
+            else if (!combineFirstAndMiddleName) {
+                firstName = originalFirstName +  originalMiddleNames[0];
+                combineFirstAndMiddleName = true;
+                GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName, originalFirstName, firstInitial, 
+                    onlyLastName, middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, 
+                    middleNamesString, urlBase, combineFirstAndMiddleName);
             }
             // Try again with middle names
             else if (middleNamesString === '' && originalMiddleNames.length > 0){
