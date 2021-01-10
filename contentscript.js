@@ -16,7 +16,8 @@ else{
 chrome.runtime.onMessage.addListener(function(message) {
     // Only include records relevant to this URL
     const fetchedRecords = message.records.filter(record => 
-        new URL(record.fields.URL).hostname === window.location.hostname);
+        new URL(record.fields.URL).hostname.toLowerCase() 
+        === window.location.hostname.toLowerCase());
     const fetchedNicknames = message.nicknames;
 
     localStorage.setItem("records", JSON.stringify(fetchedRecords));
@@ -172,14 +173,15 @@ function AddRatingsFromAirtable() {
 
 function GetProfessorRating(element, record, isLastRecord, fullName, lastName, originalLastName, firstName, originalFirstName, firstInitial, onlyLastName, 
     middleNames, originalMiddleNames, tryNicknames, nicknamesIndex, middleNamesRemovalStep, middleNameAsFirst, middleNamesString, urlBase) {
-    let schoolName = record.fields.College;
-    // If there are multiple colleges that use the same URL, use the common substring of the college names as the schoolSiteSearchName
+    let schoolName = record.fields.College.toLowerCase();
+    // If there are multiple colleges that use the same site, use the common substring of the college names as the schoolSiteSearchName
     let commonSchoolName;
-    const collegesWithSameUrl = savedRecords
-        .filter(x => x.fields.URL === record.fields.URL)
-        .map(x => x.fields.College);
-    if (collegesWithSameUrl.length > 1){
-        commonSchoolName = commonSubsequence(collegesWithSameUrl);
+    const collegesWithSameSite = savedRecords
+        .filter(x => new URL(x.fields.URL).hostname.toLowerCase()
+        === new URL(record.fields.URL).hostname.toLowerCase())
+        .map(x => x.fields.College.toLowerCase());
+    if (collegesWithSameSite.length > 1) {
+        commonSchoolName = commonSubsequence(collegesWithSameSite);
     }
     const schoolApiSearchName = schoolName.replace(' - ', ' ');
     const schoolSiteSearchName = (commonSchoolName ? commonSchoolName : schoolName)
