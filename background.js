@@ -119,11 +119,20 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
   
 function injectCode(tabId) {
-    chrome.tabs.insertCSS({
+    chrome.tabs.removeCSS({
         file: "prof-rating.css"
     });
     chrome.tabs.insertCSS({
+        file: "prof-rating.css"
+    });
+    chrome.tabs.removeCSS({
         file: "tooltipster/dist/css/tooltipster.main.min.css"
+    });
+    chrome.tabs.insertCSS({
+        file: "tooltipster/dist/css/tooltipster.main.min.css"
+    });
+    chrome.tabs.removeCSS({
+        file: "tooltip.css"
     });
     chrome.tabs.insertCSS({
         file: "tooltip.css"
