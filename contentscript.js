@@ -363,8 +363,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                     const origMiddleNamesString = originalMiddleNames.join('+');
                     element.setAttribute('href', 
                     `https://www.ratemyprofessors.com/search.jsp?queryBy=teacherName&queryoption=HEADER&query=${
-                    originalFirstName ? originalFirstName + '+' : ''}${originalMiddleNames.length > 0 ? 
-                    origMiddleNamesString + '+': ''}${originalLastName}&facetSearch=true&schoolName=${schoolSiteSearchName}`);
+                        originalLastName}&facetSearch=true&schoolName=${schoolSiteSearchName}`);
                 }
             }
         }        
