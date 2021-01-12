@@ -73,7 +73,7 @@ function getConditions(){
 
 const showIconRule = {
     conditions: getConditions(),
-    actions: [ new chrome.declarativeContent.SetIcon({path:'images/icon16.png'}) ]
+    actions: [ new chrome.declarativeContent.SetIcon({path:'images/favicon-16.png'}) ]
   };
 
 // Always show page action

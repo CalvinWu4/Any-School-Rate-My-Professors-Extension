@@ -22,16 +22,16 @@
 		"contentscript.js"
 	],
 	"page_action": {
-		"default_icon": "images/icon16-gray.png"
+		"default_icon": "images/favicon-16-gray.png"
 	},
 	"background": {
 		"scripts": ["node_modules/papaparse/papaparse.min.js", "background.js"],
 		"persistent": false
 		},
 		"icons": { 
-			"16": "images/icon16.png",
-			"48": "images/icon48.png",
-			"128": "images/icon128.png" 
+			"16": "images/favicon-16.png",
+			"48": "images/favicon-48.png",
+			"128": "images/favicon-128.png" 
 		},
 	"manifest_version" : 2
 }
