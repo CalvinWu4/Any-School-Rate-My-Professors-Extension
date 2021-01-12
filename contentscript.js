@@ -139,10 +139,10 @@ function AddRatingsFromAirtable() {
             // Handle iframes
             function AddRatingsToIframe(iframe){
                 if (iframe.contentDocument) {
-                    unloadCSS('prof-rating', iframe.contentDocument);
-                    loadCSS('prof-rating', iframe.contentDocument);
-                    unloadCSS('tooltip', iframe.contentDocument);
-                    loadCSS('tooltip', iframe.contentDocument);
+                    unloadCSS('prof-rating.css', iframe.contentDocument);
+                    loadCSS('prof-rating.css', iframe.contentDocument);
+                    unloadCSS('tooltip.css', iframe.contentDocument);
+                    loadCSS('tooltip.css', iframe.contentDocument);
                     const elements = iframe.contentDocument.querySelectorAll(selector);
                     elements.forEach(element => {
                         AddRating(element);
