@@ -32,8 +32,6 @@ chrome.runtime.onMessage.addListener(function(message) {
 
 // Add professor ratings god function
 function AddRatingsFromAirtable() {
-    const urlBase = 
-    "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
     const psMobileSelector = '#search-results .section-content .section-body'; // Handle PeopleSoft Mobile
     for (const [recordIndex, record] of savedRecords.entries()) {
         // Split CSS selectors by new line
@@ -107,7 +105,7 @@ function AddRatingsFromAirtable() {
                 GetProfessorRating(element, record, isLastRecord, fullName, lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
         };
 
@@ -179,7 +177,7 @@ function AddRatingsFromAirtable() {
 
 function GetProfessorRating(element, record, isLastRecord, fullName, lastName, originalLastName, firstName,
     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames, nicknamesIndex,
-    tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst, tryMiddleNames, urlBase) {
+    tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst, tryMiddleNames) {
 
     let schoolName = record.fields.College.toLowerCase();
     // If there are multiple colleges that use the same site, 
@@ -198,6 +196,8 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
     const linkifyRating = record.fields["Only Add Link To Rating"];
     const lightColorLink = record.fields["Light Color Link"];
     const middleNamesString = tryMiddleNames ? middleNames.join('+') : '';
+    const urlBase = 
+    "https://search-production.ratemyprofessors.com/solr/rmp/select/?solrformat=true&rows=2&wt=json&q=";
     url = `${urlBase}${firstName ? firstName + '+' : ''}${middleNamesString === '' ? '' : middleNamesString + "+"}${
         tryMiddleAndLastNameCombos && middleNamesString ? '' : lastName}+AND+schoolname_t:${schoolApiSearchName}`;
     const middleAndLastNameCombos = getNameCombos(originalMiddleNames.concat(lastName));
@@ -285,7 +285,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
             // Try again with only the first part of a hyphenated last name
             else if (lastName.includes("-")) {
@@ -293,7 +293,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
             // Try again with different middle and last names combos
             else if (tryMiddleNames && tryMiddleAndLastNameCombos && 
@@ -307,7 +307,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
             // Try again with nicknames for the first name
             else if (tryNicknames && savedNicknames[originalFirstName]) {
@@ -320,7 +320,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
             // Try again with the middle name as the first name
             else if (tryMiddleNameAsFirst && !tryMiddleNames && originalMiddleNames.length > 0) {
@@ -329,7 +329,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
             // Try again with middle names
             else if (!tryMiddleNames && originalMiddleNames.length > 0) {
@@ -337,7 +337,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
-                    tryMiddleNames, urlBase);
+                    tryMiddleNames);
             }
             // Set link to search results if not found
             else {
