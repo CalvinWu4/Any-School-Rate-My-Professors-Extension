@@ -49,7 +49,9 @@ async function getAirtableRecords(tabUrl) {
                 const urls = records.map(record => record.fields.URL);
                 // Need to reload extension to change icon
                 // Reload extension on install and if current url got added/removed from Airtable
-                if (tabUrl === null || (urls.some(url => url === tabUrl) !== savedUrls.some(url => url === tabUrl))) {
+                if (tabUrl === null || 
+                    (urls.some(url => new URL(url).hostname.toLowerCase() === new URL(tabUrl).hostname.toLowerCase()) 
+                    !== savedUrls.some(url => new URL(url).hostname.toLowerCase() === new URL(tabUrl).hostname.toLowerCase()))) {
                     savedUrls = urls;
                     chrome.runtime.reload();
                 }
