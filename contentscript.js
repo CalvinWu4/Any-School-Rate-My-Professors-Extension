@@ -1,7 +1,8 @@
 let savedRecords = JSON.parse(localStorage.getItem("records"));
 let savedNicknames = JSON.parse(localStorage.getItem("nicknames"));
-
 let waitForFetch;
+let restoreFirstName = false;
+let restoreMiddleNames = false;
 
 // Add ratings if there are already records saved
 if (savedRecords && savedRecords.length > 0) {
@@ -201,8 +202,14 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
     url = `${urlBase}${firstName ? firstName + '+' : ''}${middleNamesString === '' ? '' : middleNamesString + "+"}${
         tryMiddleAndLastNameCombos && middleNamesString ? '' : lastName}+AND+schoolname_t:${schoolApiSearchName}`;
     const middleAndLastNameCombos = getNameCombos(originalMiddleNames.concat(lastName));
-    if (originalMiddleNames[0] && firstName === originalMiddleNames[0]) {
-        firstName = originalFirstName; // Restore first name after tryMiddleNameAsFirst
+    // Restore fields after certain iterations 
+    if (restoreFirstName) {
+        firstName = originalFirstName;
+        restoreFirstName = false;
+    }
+    if (restoreMiddleNames) {
+        middleNames = [...originalMiddleNames];
+        restoreMiddleNames = false;
     }
 
     chrome.runtime.sendMessage({ url: url }, function (response) {
@@ -302,7 +309,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 middleAndLastNameCombosIndex++;
                 tryMiddleAndLastNameCombos = middleAndLastNameCombos[middleAndLastNameCombosIndex];
                 if (!tryMiddleAndLastNameCombos) {
-                    middleNames = [...originalMiddleNames]; // Restore middle names
+                    restoreMiddleNames = true;
                 }
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
@@ -315,7 +322,7 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
                 nicknamesIndex++;
                 tryNicknames = savedNicknames[originalFirstName][nicknamesIndex];
                 if (!tryNicknames) {
-                    firstName = originalFirstName; // Restore first name
+                    restoreFirstName = true;
                 }
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
@@ -324,8 +331,9 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
             }
             // Try again with the middle name as the first name
             else if (tryMiddleNameAsFirst && !tryMiddleNames && originalMiddleNames.length > 0) {
-                tryMiddleNameAsFirst = false;
                 firstName = originalMiddleNames[0];
+                tryMiddleNameAsFirst = false;
+                restoreFirstName = true;
                 GetProfessorRating(element, record, isLastRecord, fullName,lastName, originalLastName, firstName,
                     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames,
                     nicknamesIndex, tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst,
@@ -499,5 +507,5 @@ function AddTooltip(element, allprofRatingsURL, realFullName, profRating, numRat
             }
         });
     }
-    getRatings(allprofRatingsURL)
+    getRatings(allprofRatingsURL);
 }
