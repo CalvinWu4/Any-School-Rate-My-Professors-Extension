@@ -180,7 +180,8 @@ function GetProfessorRating(element, record, isLastRecord, fullName, lastName, o
     originalFirstName, firstInitial, onlyLastName, middleNames, originalMiddleNames, tryNicknames, nicknamesIndex,
     tryMiddleAndLastNameCombos, middleAndLastNameCombosIndex, tryMiddleNameAsFirst, tryMiddleNames) {
 
-    let schoolName = record.fields.College.toLowerCase();
+    // Do some normalization to help with search
+    let schoolName = record.fields.College.toLowerCase().replace(':', '').replace(' - ', ' ');
     // If there are multiple colleges that use the same site, 
     // use the common substring of the college names as the schoolSiteSearchName
     let commonSchoolName;
