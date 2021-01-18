@@ -64,7 +64,10 @@ function AddRatingsFromAirtable() {
             fullName = fullName.replace('instructor: ', '');
             fullName = fullName.replace(parenthesesRegex, '');
 
-            if (fullName && fullName !== 'staff' && fullName !== 'tba') {
+            const containsLettersRegex = /[a-zA-Z]/g;
+
+            if (fullName && containsLettersRegex.test(fullName) && fullName !== 'staff' && fullName !== 'tba' 
+            && fullName !== 't.b.a.' && fullName !== 'cancel') {
                 // Convert "last name, first name" to "first name last name"
                 fullName = normalizeNameOrder(fullName);
                 const splitName = fullName.split(' ');
