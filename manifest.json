@@ -1,23 +1,25 @@
 {
 	"name" : "Any School Rate My Professors Extension",
-	"version" : "1.1.5",
+	"version" : "1.2.0",
 	"description" : "Shows the Rate My Professors rating of professors while searching for classes.",
-	"permissions": ["https://search-production.ratemyprofessors.com/*", 
+	"permissions": [
+		"https://search-production.ratemyprofessors.com/*", 
 		"https://raw.githubusercontent.com/carltonnorthern/nickname-and-diminutive-names-lookup/master/names.csv/", 
 		"activeTab", 
-		"declarativeContent"],
+		"declarativeContent"
+	],
 	"optional_permissions": [
         "http://*/*",
         "https://*/*"
 	],
 	"web_accessible_resources": [
+		"node_modules/tippy.js/dist/tippy.css",
+		"node_modules/tippy.js/themes/light.css",
 		"prof-rating.css",
-		"tooltipster/dist/css/tooltipster.main.min.css",
-		"tooltip.css",
-		"jquery-3.3.1.min.js",
-		"node_modules/compromise/builds/compromise.js",
-		"arrive.min.js",
-		"tooltipster/dist/js/tooltipster.bundle.min.js",
+		"node_modules/compromise/builds/compromise.min.js",
+		"node_modules/arrive/minified/arrive.min.js",
+		"node_modules/@popperjs/core/dist/umd/popper.min.js",
+		"node_modules/tippy.js/dist/tippy-bundle.umd.min.js",
 		"utils.js",
 		"contentscript.js"
 	],
@@ -25,7 +27,10 @@
 		"default_icon": "images/favicon-16-gray.png"
 	},
 	"background": {
-		"scripts": ["node_modules/papaparse/papaparse.min.js", "background.js"],
+		"scripts": [
+			"node_modules/papaparse/papaparse.min.js",
+			"background.js"
+		],
 		"persistent": false
 		},
 		"icons": { 

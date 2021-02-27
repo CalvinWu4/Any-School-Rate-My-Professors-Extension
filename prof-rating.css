@@ -2,6 +2,20 @@ a.prof-rating {
     color: #0000EE !important;
 }
 
+a.prof-rating:hover {
+    text-decoration: underline;
+}
+
 a.prof-rating.light-blue {
     color: #58a6ff !important;
+}
+
+.prof-rating-title {
+    font-size: 24px;
+}
+
+.prof-rating-text {
+    font-size: 16px;
+    margin-top: 3.2px;
+    margin-bottom: 3.2px;
 }

@@ -2,10 +2,12 @@
   "name": "multi-college-rate-my-professor-extension",
   "version": "1.0.0",
   "dependencies": {
-    "compromise": "^13.7.0",
-    "papaparse": "^5.3.0"
+    "@popperjs/core": "^2.8.6",
+    "arrive": "^2.4.1",
+    "compromise": "^13.10.0",
+    "papaparse": "^5.3.0",
+    "tippy.js": "^6.3.1"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CalvinWu4/Multi-College-Rate-My-Professor-Extension.git"

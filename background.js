@@ -122,34 +122,34 @@ chrome.runtime.onInstalled.addListener(function(details) {
   
 function injectCode(tabId) {
     chrome.tabs.removeCSS({
+        file: "node_modules/tippy.js/dist/tippy.css"
+    });
+    chrome.tabs.insertCSS({
+        file: "node_modules/tippy.js/dist/tippy.css"
+    });
+    chrome.tabs.removeCSS({
+        file: "node_modules/tippy.js/themes/light.css"
+    });
+    chrome.tabs.insertCSS({
+        file: "node_modules/tippy.js/themes/light.css"
+    });
+    chrome.tabs.removeCSS({
         file: "prof-rating.css"
     });
     chrome.tabs.insertCSS({
         file: "prof-rating.css"
     });
-    chrome.tabs.removeCSS({
-        file: "tooltipster/dist/css/tooltipster.main.min.css"
-    });
-    chrome.tabs.insertCSS({
-        file: "tooltipster/dist/css/tooltipster.main.min.css"
-    });
-    chrome.tabs.removeCSS({
-        file: "tooltip.css"
-    });
-    chrome.tabs.insertCSS({
-        file: "tooltip.css"
+    chrome.tabs.executeScript({
+        file: "node_modules/compromise/builds/compromise.min.js"
     });
     chrome.tabs.executeScript({
-        file: "jquery-3.3.1.min.js"
+        file: "node_modules/arrive/minified/arrive.min.js"
     });
     chrome.tabs.executeScript({
-        file: "node_modules/compromise/builds/compromise.js"
+        file: "node_modules/@popperjs/core/dist/umd/popper.min.js"
     });
     chrome.tabs.executeScript({
-        file: "arrive.min.js"
-    });
-    chrome.tabs.executeScript({
-        file: "tooltipster/dist/js/tooltipster.bundle.min.js"
+        file: "node_modules/tippy.js/dist/tippy-bundle.umd.min.js"
     });
     chrome.tabs.executeScript({
         file: "utils.js"
