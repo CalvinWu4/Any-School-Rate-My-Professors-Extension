@@ -19,9 +19,6 @@ To better find professors, this extension will try the first part of a hyphenate
 - The page will refresh and professors ratings will be shown on the page.
 - Changes from the Airtable will be reflected whenever you click on the extension icon.
 
-### Known Issues
-- Tooltip not working on classic PeopleSoft sites
-
 ### Screenshots
 ![Screenshot](images/screenshot.png)
 ![Screenshot](images/screenshot2.png)
