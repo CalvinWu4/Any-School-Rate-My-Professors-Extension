@@ -71,11 +71,10 @@ const surnameParticles = ['a', 'à', 'af', 'al', 'am', 'aus\'m', 'aus’m', 'av'
 
 function getNameCombos(nameArray) {
     nameArray = combinations(nameArray);
-
-    // Filter out name combos that only contain surname particles
     function isSubset(arr) {
         return arr.every(val => surnameParticles.includes(val.toLowerCase()));
     }
-
-    return nameArray.filter(combo => !isSubset(combo));
+    
+    // Filter out name combos that only contain surname particles unless they are the only combo
+    return nameArray.length > 1 ? nameArray.filter(combo => !isSubset(combo)) : nameArray;
 }
