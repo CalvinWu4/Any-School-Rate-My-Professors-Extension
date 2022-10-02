@@ -12,8 +12,10 @@ a.prof-rating.light-blue {
 
 .prof-rating-title {
     font-size: 1.2em;
+    text-align: left;
 }
 
 .prof-rating-text {
     font-size: 1em;
+    text-align: left;
 }
